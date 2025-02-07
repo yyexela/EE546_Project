@@ -92,9 +92,91 @@ theorem helper_lemma_1 {a b : ℤ} : 1 = a * b → a = 1 ∨ a = -1 := by
         contradiction
 
       | e + 1, f + 1 =>
-        sorry
-  | Int.negSucc x, Int.ofNat y => sorry
-  | Int.ofNat x, Int.negSucc y => sorry
+        by_contra! h3
+        have h3: 1 < e + 1 + 1 := by simp
+        have h4: Int.negSucc (e + 1 + 1) < 1 := by
+          exact (Mathlib.Tactic.Qify.intCast_lt (Int.negSucc (e + 1 + 1)) 1).mpr rfl
+        have h5: Int.negSucc (e + 1 + 1) < 1 := by
+          exact (Mathlib.Tactic.Qify.intCast_lt (Int.negSucc (e + 1 + 1)) 1).mpr rfl
+        have : 1 < Int.negSucc (e + 1 + 1)*Int.negSucc (f + 1 + 1) := by exact compare_gt_iff_gt.mp rfl
+        have : 1 ≠ Int.negSucc (e + 1 + 1)*Int.negSucc (f + 1 + 1) := by linarith
+        contradiction
+
+  | Int.negSucc x, Int.ofNat y =>
+    match x, y with
+    | 0, 0 =>
+      simp_all
+    | z + 1, 0 =>
+      simp_all
+    | 0, w + 1 =>
+      match w with
+      | 0 =>
+        simp_all
+      | f + 1 =>
+        by_contra! h3
+        have : 1 ≠ Int.negSucc 0 * Int.ofNat (f + 1 + 1) := by exact ne_of_beq_false rfl
+        contradiction
+    | z + 1, w + 1 =>
+      match z, w with
+      | 0, 0 =>
+        simp_all
+      | e + 1, 0 =>
+        by_contra! h3
+        simp_all
+
+      | 0, f + 1 =>
+        by_contra! h3
+        by_contra! h3
+        have : 1 ≠ Int.negSucc 0 * Int.ofNat (f + 1 + 1) := by exact ne_of_beq_false rfl
+        contradiction
+      | e + 1, f + 1 =>
+        by_contra! h3
+        have h3: 1 < e + 1 + 1 := by simp
+        have h4: Int.negSucc (e + 1 + 1) < 1 := by
+          exact (Mathlib.Tactic.Qify.intCast_lt (Int.negSucc (e + 1 + 1)) 1).mpr rfl
+        have h5: Int.negSucc (e + 1 + 1) < 1 := by
+          exact (Mathlib.Tactic.Qify.intCast_lt (Int.negSucc (e + 1 + 1)) 1).mpr rfl
+        have : 1 < Int.negSucc (e + 1 + 1)*Int.negSucc (f + 1 + 1) := by exact compare_gt_iff_gt.mp rfl
+        have : 1 ≠ Int.negSucc (e + 1 + 1)*Int.negSucc (f + 1 + 1) := by linarith
+        contradiction
+
+  | Int.ofNat y, Int.negSucc x =>
+    match x, y with
+    | 0, 0 =>
+      simp_all
+    | z + 1, 0 =>
+      simp_all
+    | 0, w + 1 =>
+      match w with
+      | 0 =>
+        simp_all
+      | f + 1 =>
+        by_contra! h3
+        have : 1 ≠ Int.negSucc 0 * Int.ofNat (f + 1 + 1) := by exact ne_of_beq_false rfl
+        contradiction
+    | z + 1, w + 1 =>
+      match z, w with
+      | 0, 0 =>
+        simp_all
+      | e + 1, 0 =>
+        by_contra! h3
+        simp_all
+
+      | 0, f + 1 =>
+        by_contra! h3
+        by_contra! h3
+        have : 1 ≠ Int.negSucc 0 * Int.ofNat (f + 1 + 1) := by exact ne_of_beq_false rfl
+        contradiction
+      | e + 1, f + 1 =>
+        by_contra! h3
+        have h3: 1 < e + 1 + 1 := by simp
+        have h4: Int.negSucc (e + 1 + 1) < 1 := by
+          exact (Mathlib.Tactic.Qify.intCast_lt (Int.negSucc (e + 1 + 1)) 1).mpr rfl
+        have h5: Int.negSucc (e + 1 + 1) < 1 := by
+          exact (Mathlib.Tactic.Qify.intCast_lt (Int.negSucc (e + 1 + 1)) 1).mpr rfl
+        have : 1 < Int.negSucc (e + 1 + 1)*Int.negSucc (f + 1 + 1) := by exact compare_gt_iff_gt.mp rfl
+        have : 1 ≠ Int.negSucc (e + 1 + 1)*Int.negSucc (f + 1 + 1) := by linarith
+        contradiction
 
 
 
