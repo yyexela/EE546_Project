@@ -16,6 +16,8 @@
 
 import Mathlib.Algebra.Divisibility.Basic
 import Mathlib.Tactic
+import Mathlib.Data.Int.Defs
+import Mathlib.Data.Nat.Defs
 open Classical
 
 /-
@@ -178,26 +180,18 @@ theorem helper_lemma_1 {a b : ℤ} : 1 = a * b → a = 1 ∨ a = -1 := by
         have : 1 ≠ Int.negSucc (e + 1 + 1)*Int.negSucc (f + 1 + 1) := by linarith
         contradiction
 
-
-
-    /-
-      have h1 : Int.negSucc y.succ = -y.succ.succ := by exact rfl
-      have h2 : -(1:ℤ)*y.succ.succ = -1*(y+2) := by exact rfl
-      have h3 : -(1:ℤ)*(y+2) = -y-2 := by linarith
-      simp[h3,h2,h1] at h
-      have h4 : 1 = (-y-2) * b := by linarith
-      have h5 : 1 = -y*b-2*b := by linarith
-      have h6 : 1 = -y*b-2*b := by linarith
-      simp
-
-      have : Int.negSucc y.succ < 0 := by simp[Int.negSucc_lt_zero]
-      have : -y < -1 := by linarith
-      have : Int.negSucc y.succ ≠ 1 := by linarith
-    -/
-
-
-
-
+theorem helper_lemma_2 {a b : ℤ} : 1 = a * b → (a = 1 ∧ b = 1) ∨ (a = -1 ∧ b = -1) := by
+  intro h1
+  have h2 := helper_lemma_1 h1
+  apply Or.elim h2
+  . intro h3
+    rw[h3] at h1
+    simp at h1
+    simp_all
+  . intro h3
+    rw[h3] at h1
+    simp at h1
+    simp_all
 
 theorem prop1_4_b {a b : ℤ} : a ∣ b → b ∣ a → a = b ∨ a = -b := by
   intro h1 h2
@@ -205,8 +199,62 @@ theorem prop1_4_b {a b : ℤ} : a ∣ b → b ∣ a → a = b ∨ a = -b := by
   obtain ⟨c, h1⟩ := h1
   obtain ⟨d, h2⟩ := h2
   rw[h1] at h2
-  have : 1 = c*d := by match a with
-  | 0 => sorry
-  | Int.ofNat x => sorry
-  | Int.negSucc x => sorry
-  sorry
+  match a, b with
+  | Int.ofNat x, Int.ofNat y =>
+    match x, y with
+    | 0, 0 =>
+      simp_all
+    | 0, Nat.succ z =>
+      simp_all
+    | Nat.succ z, 0 =>
+      by_contra! h3
+      simp at h1 h2 h3
+      apply Or.elim h1
+      . intro h
+        exact h3 h
+      . intro h
+        simp[h] at h2
+        exact h3 h2
+    | Nat.succ z, Nat.succ w =>
+      simp
+      simp at h1 h2
+      have h3: ((z:ℤ) + 1) ≠ 0 := by exact Ne.symm (Int.ne_of_lt (Int.sign_eq_one_iff_pos.mp rfl))
+      have h4 : 1 * (↑z + 1) =  (c * d) * (↑z + 1) := by linarith
+      have h5 : 1 = c * d := by apply Int.eq_of_mul_eq_mul_right h3 h4
+      have h6 := helper_lemma_2 h5
+      apply Or.elim h6
+      . rintro ⟨h7, h8⟩
+        simp[h7,h8] at h1 h2
+        left
+        exact id (Eq.symm h1)
+      . rintro ⟨h7, h8⟩
+        simp[h7,h8] at h1 h2
+        left
+        linarith
+  | Int.negSucc x, Int.negSucc y =>
+    match x, y with
+    | 0, 0 =>
+      sorry
+    | z + 1, 0 =>
+      sorry
+    | 0, w + 1 =>
+      sorry
+    | z + 1, w + 1 =>
+      sorry
+  | Int.ofNat x, Int.negSucc y =>
+    sorry
+  | Int.negSucc y, Int.ofNat x =>
+    sorry
+
+/-
+      -- simp[Int.mul_zero] at h1
+      have h3b: Int.ofNat z.succ ≠ 0 := by exact Ne.symm (Int.ne_of_lt (Int.sign_eq_one_iff_pos.mp rfl))
+      have h4 : 1 * Int.ofNat z.succ =  (c * d) * Int.ofNat z.succ := by linarith
+      have h5 : 1 = c * d := by apply Int.eq_of_mul_eq_mul_right h3b h4
+      have h6 := helper_lemma_1 h5
+      apply Or.elim h6
+      . intro h7
+
+        sorry
+      . sorry
+-/
