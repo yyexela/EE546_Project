@@ -234,13 +234,47 @@ theorem prop1_4_b {a b : ℤ} : a ∣ b → b ∣ a → a = b ∨ a = -b := by
   | Int.negSucc x, Int.negSucc y =>
     match x, y with
     | 0, 0 =>
-      sorry
+      left
+      rfl
     | z + 1, 0 =>
-      sorry
-    | 0, w + 1 =>
-      sorry
+      by_contra! h3
+      simp at h1 h2 h3
+      have h4: Int.negSucc (z + 1) ≠ 0 := by exact Int.negSucc_ne_zero (z + 1)
+      have h5 : Int.negSucc (z + 1) * 1 = Int.negSucc (z + 1) * (c * d) := by linarith
+      have h6 : 1 = c * d := by apply Int.eq_of_mul_eq_mul_left h4 h5
+      have h7 := helper_lemma_2 h6
+      apply Or.elim h7
+      . rintro ⟨h8, h9⟩
+        simp[h7,h8] at h1 h2
+        have h10 : Int.negSucc (z + 1) = -1 := by exact id (Eq.symm h1)
+        exact h3 h10
+      . rintro ⟨h8, h9⟩
+        simp[h7,h8] at h1 h2
+    | 0, z + 1 =>
+      by_contra! h3
+      simp at h1 h2 h3
+      have h7 := helper_lemma_2 h2
+      apply Or.elim h7
+      . rintro ⟨h8, h9⟩
+        simp[h7,h8] at h1 h2
+        have h10 : -1 = Int.negSucc (z + 1)  := by exact id (Eq.symm h1)
+        exact h3 h10
+      . rintro ⟨h8, h9⟩
+        simp[h7,h8] at h1 h2
     | z + 1, w + 1 =>
-      sorry
+      have h3: Int.negSucc (z + 1) ≠ 0 := by exact Int.negSucc_ne_zero (z + 1)
+      have h4 : Int.negSucc (z + 1) * 1 = Int.negSucc (z + 1) * (c * d) := by linarith
+      have h6 : 1 = c * d := by apply Int.eq_of_mul_eq_mul_left h3 h4
+      have h7 := helper_lemma_2 h6
+      apply Or.elim h7
+      . rintro ⟨h8, h9⟩
+        rw[h8] at h1
+        have : Int.negSucc (z + 1) = Int.negSucc (w + 1) := by linarith
+        left; apply this
+      . rintro ⟨h8, h9⟩
+        rw[h8] at h1
+        have : Int.negSucc (z + 1) = - Int.negSucc (w + 1) := by linarith
+        right; apply this
   | Int.ofNat x, Int.negSucc y =>
     sorry
   | Int.negSucc y, Int.ofNat x =>
