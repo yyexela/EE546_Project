@@ -47,6 +47,7 @@ theorem helper_lemma_2 {a b : ℤ} : 1 = a * b → (a = 1 ∧ b = 1) ∨ (a = -1
     simp at h1
     simp_all
 
+/-classical not needed, but makes things easier-/
 theorem prop1_4_b {a b : ℤ} : a ∣ b → b ∣ a → a = b ∨ a = -b := by
   apply Or.elim (Classical.em (a < 0))
   . apply Or.elim (Classical.em (b < 0))
@@ -132,3 +133,5 @@ def euclid_alg2 (a b: ℕ) : ℕ :=
 theorem euclid1_7 {a b: ℕ} : euclid_alg a b = Nat.gcd a b := sorry
 
 /-Next: extended euclid, modulo, primes-/
+
+/-implement definition of gcd outside of alg (e.g. there exists...)-/
