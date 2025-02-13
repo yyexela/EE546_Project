@@ -47,6 +47,7 @@ theorem helper_lemma_2 {a b : ℤ} : 1 = a * b → (a = 1 ∧ b = 1) ∨ (a = -1
     simp at h1
     simp_all
 
+/-classical not needed, but makes things easier-/
 theorem prop1_4_b {a b : ℤ} : a ∣ b → b ∣ a → a = b ∨ a = -b := by
   apply Or.elim (Classical.em (a < 0))
   . apply Or.elim (Classical.em (b < 0))
@@ -96,6 +97,8 @@ gcd are the same." - Jason Rute, IBM
 https://proofassistants.stackexchange.com/questions/2397/prove-an-upper-bound-on-the-computation-time-of-the-euclidean-algorithm-in-lean4
 
 This will affect proving other theorems in the book
+
+Klavins: you can still say something about runtime with e.g. Turing machine class in Lean
 -/
 
 /-Mathlib's implementation: Euclidean Domain, uses rings -/
@@ -132,3 +135,5 @@ def euclid_alg2 (a b: ℕ) : ℕ :=
 theorem euclid1_7 {a b: ℕ} : euclid_alg a b = Nat.gcd a b := sorry
 
 /-Next: extended euclid, modulo, primes-/
+
+/-implement definition of gcd outside of alg (e.g. there exists...)-/
