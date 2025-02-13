@@ -90,10 +90,12 @@ theorem prop1_4_c {a b c: ℤ } : a ∣ b → a ∣ c → a ∣ (b+c) ∧ a ∣ 
   intro h1 h2
   exact ⟨ Int.dvd_add h1 h2, Int.dvd_sub h1 h2⟩
 
-/-Seems like proving big O notation in Lean is very difficult / currently not practical (will affect proving multiple theorems in the book):
-Source: "using functional extensionality, Lean thinks all computations of
+/-Seems like proving big O notation in Lean is very difficult / currently not practical:
+Because: "using functional extensionality, Lean thinks all computations of
 gcd are the same." - Jason Rute, IBM
 https://proofassistants.stackexchange.com/questions/2397/prove-an-upper-bound-on-the-computation-time-of-the-euclidean-algorithm-in-lean4
+
+This will affect proving other theorems in the book
 -/
 
 /-Mathlib's implementation: Euclidean Domain, uses rings -/
@@ -128,3 +130,5 @@ def euclid_alg2 (a b: ℕ) : ℕ :=
 
 /-Proves euclid_alg actually returns gcd-/
 theorem euclid1_7 {a b: ℕ} : euclid_alg a b = Nat.gcd a b := sorry
+
+/-Next: extended euclid, modulo, primes-/
