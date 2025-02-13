@@ -92,14 +92,20 @@ theorem prop1_4_c {a b c: ℤ } : a ∣ b → a ∣ c → a ∣ (b+c) ∧ a ∣ 
 
 /- Nat used for simplicity, even though alg mentions "positive integers"
 if the def in Lean has no errors, it implies it converges (finite steps)-/
-def euclid_alg (a b: ℕ) : ℕ :=
-  have r0 := a
-  have r1 := b
+def euclid_alg (a b: ℕ) (h : a ≥ b) : ℕ :=
+  let r0 := a
+  let r1 := b
   have i := 1
-  have rem := r0 % r1
+  let rem := r0 % r1
   match rem with
   | 0 => r1
-  | _ => euclid_alg r1 rem
+  | x =>
+    have h0 : rem < r1.succ := by
+      apply Nat.lt_succ_of_le
+      have h2 : rem ≤ r1 := by refine Nat.le_of_lt_succ (sorry)
+      exact h2
+    have h1 : r1 ≥ rem := by refine Nat.le_of_lt_succ (h0)
+    euclid_alg r1 rem (h1)
 
 /-Proves euclid_alg actually returns gcd-/
 theorem euclid1_7 {a b: ℕ} : euclid_alg a b = Nat.gcd a b := sorry
