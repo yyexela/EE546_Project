@@ -24,15 +24,19 @@ open Classical
   Chapter 1: An Introduction to Cryptography
 -/
 
+/-. Prop 1.4 Let a, b, c ∈ Z be integers.
+(a) If a | b and b | c, then a | c.-/
 theorem prop1_4_a {a b c : ℤ} : a ∣ b → b ∣ c → a ∣ c := by
   intro h1 h2
   exact Int.dvd_trans h1 h2
 
+/- if ab=1, then a=1 OR a=-1-/
 -- Not in book
 theorem helper_lemma_1 {a b : ℤ} : 1 = a * b → a = 1 ∨ a = -1 := by
   intro h
   exact Int.eq_one_or_neg_one_of_mul_eq_one (id (Eq.symm h))
 
+/- if ab=1, then a,b=1 OR a,b=-1-/
 -- Not in book
 theorem helper_lemma_2 {a b : ℤ} : 1 = a * b → (a = 1 ∧ b = 1) ∨ (a = -1 ∧ b = -1) := by
   intro h1
@@ -47,6 +51,7 @@ theorem helper_lemma_2 {a b : ℤ} : 1 = a * b → (a = 1 ∧ b = 1) ∨ (a = -1
     simp at h1
     simp_all
 
+-- (b) If a | b and b | a, then a = ±b.
 /-classical not needed, but makes things easier-/
 theorem prop1_4_b {a b : ℤ} : a ∣ b → b ∣ a → a = b ∨ a = -b := by
   apply Or.elim (Classical.em (a < 0))
@@ -87,6 +92,7 @@ theorem prop1_4_b {a b : ℤ} : a ∣ b → b ∣ a → a = b ∨ a = -b := by
       left
       exact this
 
+-- (c) If a | b and a | c, then a | (b + c) and a | (b − c).
 theorem prop1_4_c {a b c: ℤ } : a ∣ b → a ∣ c → a ∣ (b+c) ∧ a ∣ (b-c) := by
   intro h1 h2
   exact ⟨ Int.dvd_add h1 h2, Int.dvd_sub h1 h2⟩
@@ -108,6 +114,17 @@ def gcd (a b : R) : R :=
     have _ := mod_lt b a0 /-mod_lt: depends on other things in Euclidean class-/
     gcd (b % a) a
 
+-- Theorem 1.7 (The Euclidean Algorithm). Let a and b be positive integers
+-- with a ≥ b. The following algorithm computes gcd(a, b) in a finite number of
+-- steps.
+-- (1) Let r0 = a and r1 = b.
+-- (2) Set i = 1.
+-- (3) Divide ri−1 by ri to get a quotient qi and remainder ri+1,
+-- ri−1 = ri · qi + ri+1 with 0 ≤ ri+1 < ri.
+-- (4) If the remainder ri+1 = 0, then ri = gcd(a, b) and the algorithm terminates.
+-- (5) Otherwise, ri+1 > 0, so set i = i + 1 and go to Step 3.
+-- The division step (Step 3) is executed at most
+-- 2 log2(b)+2 times.
 /- Basic (non extended) implementation attempt-/
 /- Nat used for simplicity, even though alg mentions "positive integers"
 if the def in Lean has no errors, it implies it converges (finite steps)-/
