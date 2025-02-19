@@ -1,3 +1,4 @@
+-- Helpful: mathlib4-all-tactics
 /-
 
   An Introduction to Mathematical Cryptography
@@ -90,22 +91,360 @@ theorem prop1_4_c {a b c: ℤ } : a ∣ b → a ∣ c → a ∣ (b+c) ∧ a ∣ 
   intro h1 h2
   exact ⟨ Int.dvd_add h1 h2, Int.dvd_sub h1 h2⟩
 
-/- Nat used for simplicity, even though alg mentions "positive integers"
-if the def in Lean has no errors, it implies it converges (finite steps)-/
-def euclid_alg (a b: ℕ) (h : a ≥ b) : ℕ :=
-  let r0 := a
-  let r1 := b
-  have i := 1
-  let rem := r0 % r1
-  match rem with
-  | 0 => r1
-  | x =>
-    have h0 : rem < r1.succ := by
-      apply Nat.lt_succ_of_le
-      have h2 : rem ≤ r1 := by refine Nat.le_of_lt_succ (sorry)
-      exact h2
-    have h1 : r1 ≥ rem := by refine Nat.le_of_lt_succ (h0)
-    euclid_alg r1 rem (h1)
 
-/-Proves euclid_alg actually returns gcd-/
-theorem euclid1_7 {a b: ℕ} : euclid_alg a b = Nat.gcd a b := sorry
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Presentation Feb 20: Alexey's contribution
+/-
+How do you prove a recursive algorithm to converges in L∃∀N?
+1) Define the algorithm
+2) Specify a decreasing value
+3) Prove the value decreases each iteration
+-/
+
+def factorial1 (a:Nat) : Nat :=
+  if a = 0 then 1
+  else
+    a * factorial1 (a-1)
+  termination_by a
+  decreasing_by
+    rename_i ha
+    exact Nat.sub_one_lt ha
+
+#eval factorial1 4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Of course, for this simple example L∃∀N can infer that it terminates by the single argument a and it knows that a-1 < a pretty trivially....
+
+def factorial2 (a:Nat) : Nat :=
+  if a = 0 then 1
+  else
+    a * factorial2 (a-1)
+  termination_by a
+
+def factorial3 (a:Nat) : Nat :=
+  if a = 0 then 1
+  else
+    a * factorial3 (a-1)
+
+def factorial4 : Nat → Nat
+  | 0 => 1
+  | n + 1 => (n + 1) * factorial4 n
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/-
+So, we return to wanting to prove that we can compute the GCD of two numbers in a finite number of steps, this is called the Euclidean Algorithm
+-/
+
+-- GCD Euclidean Algorithm
+def theorem1_7 (a b : Nat) : Nat :=
+  if a = 0 then
+    b
+  else
+    theorem1_7 (b % a) a
+  termination_by a
+  decreasing_by
+    rename_i h
+    simp_wf
+    apply Nat.mod_lt _ (Nat.zero_lt_of_ne_zero _)
+    assumption
+
+#eval theorem1_7 93 6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/-
+There is a more computationally efficient definition for Euclidean's Algorithm that we can implement in lean as well:
+
+Let a and b be positive integers. Then the equation
+            au + bv = gcd(a, b)
+always has a solution in integers u and v.
+-/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Helper for extended euclidean algorithm
+def theorem1_11_h (a b u x y g : Nat) : (Nat × Nat × Nat) :=
+  if y = 0 then
+    ⟨g, u, ((g-a*u)/b)⟩
+  else
+    let s := g / y
+    let t := g % y
+    theorem1_11_h a b x s t y
+  termination_by y
+  decreasing_by
+    rename_i hy
+    refine Nat.mod_lt g (by exact Nat.zero_lt_of_ne_zero hy)
+
+-- Extended Euclidean Algorithm
+def theorem1_11 (a b : Nat) : (Nat × Nat × Nat) :=
+  theorem1_11_h a b 1 0 b a
+
+#eval theorem1_11 93 6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Relatively Prime Definition
+def rel_prime (a b : Nat) :=
+  theorem1_7 a b = 1 -- theorem1_7: GCD
+
+#eval theorem1_7 6 35
+
+theorem rel_prime_ex1 : rel_prime 6 35 := by
+  simp[rel_prime, theorem1_7]
+
+#eval theorem1_7 5 35
+
+theorem rel_prime_ex2 : ¬ rel_prime 5 35 := by
+  simp[rel_prime, theorem1_7]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- For fun: show that the first 100 numbers are relatively prime to 293 by raw computation using lists
+def numbers : List Nat := List.range 101 |>.drop 1
+def pairs : List (Nat × Nat) := numbers.map (λ n => (n,293))
+def gcds : List Nat := pairs.map (λ ab => theorem1_7 ab.1 ab.2)
+def sub1 : List Nat := gcds.map (λ gcd => gcd-1)
+def sum := sub1.foldl (λ acc x => acc + x) 0
+
+#eval numbers
+#eval pairs
+#eval gcds
+#eval sub1
+#eval sum
