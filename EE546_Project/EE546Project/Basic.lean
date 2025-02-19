@@ -559,3 +559,101 @@ def sum := sub1.foldl (λ acc x => acc + x) 0
 #eval gcds
 #eval sub1
 #eval sum
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Definition. Let m ≥ 1 be an integer. We say that the integers a and b are
+-- congruent modulo m if their difference a − b is divisible by m. We write
+-- a ≡ b (mod m)
+-- to indicate that a and b are congruent modulo m. The number m is called the
+-- modulus.
+def congru_mod (a b m: ℤ) (h: m ≥ 1) :=
+  m ∣ (a-b)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Proposition 1.13. Let m ≥ 1 be an integer.
+-- (a) If a1 ≡ a2 (mod m) and b1 ≡ b2 (mod m), then
+-- a1 ± b1 ≡ a2 ± b2 (mod m) and a1 · b1 ≡ a2 · b2 (mod m).
+
+-- (b) Let a be an integer. Then
+-- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
+-- Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
+-- the (multiplicative) inverse of a modulo m.
+theorem prop1_13a (a1 a2 b1 b2 m: ℤ)
+  (h: m ≥ 1)
+  (h2: congru_mod a1 a2 m h)
+  (h3: congru_mod b1 b2 m h):
+  (congru_mod (a1 + b1) (a2 + b2) m h) ∧ (congru_mod (a1 - b1) (a2 - b2) m h) ∧ (congru_mod (a1 * b1) (a2 * b2) m h) := by
+    simp_all[congru_mod]
+    apply And.intro
+    . have divsum := Int.dvd_add h2 h3
+      have commu_sum : a1 - a2 + (b1 - b2) = a1 + b1 - (a2 + b2) := by ring
+      rw[commu_sum] at divsum
+      exact divsum
+    . apply And.intro
+      . have divsum := Int.dvd_sub h2 h3
+        have commu_sum : a1 - a2 - (b1 - b2) = a1 - b1 - (a2 - b2) := by ring
+        rw[commu_sum] at divsum
+        exact divsum
+      . exact dvd_mul_sub_mul h2 h3
