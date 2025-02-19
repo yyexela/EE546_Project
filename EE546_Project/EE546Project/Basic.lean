@@ -635,7 +635,7 @@ def congru_mod (a b m: ℤ) (h: m ≥ 1) :=
 -- Proposition 1.13. Let m ≥ 1 be an integer.
 -- (a) If a1 ≡ a2 (mod m) and b1 ≡ b2 (mod m), then
 -- a1 ± b1 ≡ a2 ± b2 (mod m) and a1 · b1 ≡ a2 · b2 (mod m).
-theorem prop1_13a (a1 a2 b1 b2 m: ℤ)
+theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
   (h: m ≥ 1)
   (h2: congru_mod a1 a2 m h)
   (h3: congru_mod b1 b2 m h):
@@ -689,7 +689,14 @@ theorem prop1_13a (a1 a2 b1 b2 m: ℤ)
 -- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
 -- Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 -- the (multiplicative) inverse of a modulo m.
-theorem prop1_13b (a b b1 b2 m: ℤ)
+theorem prop1_13_b (a b b1 b2 m: ℤ)
   (h: m ≥ 1):
-  (congru_mod a b 1 h ↔ (theorem1_7 a m) = 1) ∧
-  (congru_mod (a * b1) (a * b2) 1 h → congru_mod (b1) (b2) m h ) := by
+  (congru_mod a b 1 (by trivial) ↔ Int.gcd a m = 1) ∧
+  (congru_mod (a * b1) (a * b2) 1 (by trivial) → congru_mod (b1) (b2) m h) := by
+  apply And.intro
+  . apply Iff.intro
+    . intro ab_eq_1_mod
+      sorry
+    . intro gcd_eq_1
+      have (one, two, three) := theorem1_11 a b
+  . sorry
