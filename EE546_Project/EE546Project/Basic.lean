@@ -391,6 +391,110 @@ def theorem1_11 (a b : Nat) : (Nat × Nat × Nat) :=
 
 
 
+/-
+For fun let's check how many times we recursed! Add a counter variable to both functions:
+-/
+
+def gcd_slow_h (a b c : Nat) : Nat × Nat :=
+  if a = 0 then
+    ⟨b,c⟩
+  else
+    gcd_slow_h (b % a) a (c+1)
+  termination_by a
+  decreasing_by
+    rename_i h
+    simp_wf
+    apply Nat.mod_lt _ (Nat.zero_lt_of_ne_zero _)
+    assumption
+
+def gcd_slow (a b : Nat) : Nat × Nat :=
+  gcd_slow_h a b 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Helper for extended euclidean algorithm
+def gcd_fast_h (a b u x y g c : Nat) : (Nat × Nat × Nat × Nat) :=
+  if y = 0 then
+    ⟨g, u, ((g-a*u)/b), c⟩
+  else
+    let s := g / y
+    let t := g % y
+    gcd_fast_h a b x s t y c
+  termination_by y
+  decreasing_by
+    rename_i hy
+    refine Nat.mod_lt g (by exact Nat.zero_lt_of_ne_zero hy)
+
+-- Extended Euclidean Algorithm
+def gcd_fast (a b : Nat) : (Nat × Nat × Nat × Nat) :=
+  gcd_fast_h a b 1 0 b a 0
+
+#eval gcd_slow 93 6
+#eval gcd_fast 93 6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- Relatively Prime Definition
 def rel_prime (a b : Nat) :=
