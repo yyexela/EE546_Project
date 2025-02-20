@@ -711,9 +711,9 @@ theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
 
 -- Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 -- the (multiplicative) inverse of a modulo m.
-theorem prop1_13_b (a b b1 b2 m: ℤ)
+theorem prop1_13_b (a b1 b2 m: ℤ)
   (h: m ≥ 1):
-  (∃ b, congru_mod (a*b) 1 m (by trivial) ↔ Int.gcd a m = 1) ∧
+  (∃ b: ℤ, congru_mod (a*b) 1 m (by trivial) ↔ Int.gcd a m = 1) ∧
   (congru_mod (a * b1) (a * b2) 1 (by trivial) → congru_mod (b1) (b2) m h) := by
   apply And.intro
   . apply Iff.intro
@@ -738,3 +738,5 @@ theorem prop1_13_b (a b b1 b2 m: ℤ)
       --match ⟨one, two⟩ with Int.gcd_eq_gcd_ab a m
       --have (one, two, three) := theorem1_11 a b
   . sorry
+
+/- next: integer rings, or skip and do primes-/
