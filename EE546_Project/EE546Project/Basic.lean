@@ -708,16 +708,33 @@ theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
 -- Proposition 1.13. Let m ≥ 1 be an integer.
 -- (b) Let a be an integer. Then
 -- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
+
 -- Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 -- the (multiplicative) inverse of a modulo m.
 theorem prop1_13_b (a b b1 b2 m: ℤ)
   (h: m ≥ 1):
-  (congru_mod a b 1 (by trivial) ↔ Int.gcd a m = 1) ∧
+  (∃ b, congru_mod (a*b) 1 m (by trivial) ↔ Int.gcd a m = 1) ∧
   (congru_mod (a * b1) (a * b2) 1 (by trivial) → congru_mod (b1) (b2) m h) := by
   apply And.intro
   . apply Iff.intro
     . intro ab_eq_1_mod
       sorry
     . intro gcd_eq_1
-      have (one, two, three) := theorem1_11 a b
+      --let u : ℤ
+      --let m : ℤ
+      apply Exists.intro b
+      sorry
+      have eq1 : a.gcd m = a * (a.gcdA m) + m * (a.gcdB m) := by exact Int.gcd_eq_gcd_ab a m
+      have eq2 : 1 = a * (a.gcdA m) + m * (a.gcdB m) := by rw[gcd_eq_1] at eq1; exact ffff /-first, rewrites ffff to equal 1, then uses exact-/
+      have eq3: m * -(a.gcdB m) = (a * (a.gcdA m) - 1) := by linarith
+      have eq4: m ∣ (a * (a.gcdA m) - 1) := by exact dvd_of_mul_right_eq (-(a.gcdB m)) fffh
+      have eq5: congru_mod (a * (a.gcdA m)) 1 m (by trivial) := by exact
+      let b := a.gcdA m
+      have eq6: congru_mod (a * (b)) 1 m (by trivial) := by exact
+      exact eq6
+      --exact fffk
+      --sorry
+      --have ⟨ er,rt,yu ⟩ := Int.gcd_eq_gcd_ab a m
+      --match ⟨one, two⟩ with Int.gcd_eq_gcd_ab a m
+      --have (one, two, three) := theorem1_11 a b
   . sorry
