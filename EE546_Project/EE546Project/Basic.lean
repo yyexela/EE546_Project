@@ -517,6 +517,100 @@ def gcd_fast (a b : Nat) : (Nat × Int × Int × Nat) :=
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/-
+What is the GCD of integers? It's just the GCD of their absolute values..
+-/
+
+def gcd_int (a b : Int) :=
+  (gcd_fast a.natAbs b.natAbs).1
+
+#eval gcd_int (93) (6)
+#eval gcd_int (93) (-6)
+#eval gcd_int (-93) (6)
+#eval gcd_int (-93) (-6)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- Relatively Prime Definition
 def rel_prime (a b : Nat) :=
   theorem1_7 a b = 1 -- theorem1_7: GCD
@@ -669,7 +763,6 @@ theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
       rw[commu_sum,commu_sum2] at prop14c
       exact prop14c
     . exact dvd_mul_sub_mul h2 h3
-
 
 
 
