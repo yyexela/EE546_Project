@@ -806,7 +806,7 @@ theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
 -- the (multiplicative) inverse of a modulo m.
 theorem prop1_13_b (a b1 b2 m: ℤ)
   (h: m ≥ 1):
-  (∃ b: ℤ, congru_mod (a*b) 1 m (by trivial) ↔ Int.gcd a m = 1) ∧
+  ((∃ b: ℤ, congru_mod (a*b) 1 m (by trivial)) ↔ Int.gcd a m = 1) ∧
   (congru_mod (a * b1) (a * b2) 1 (by trivial) → congru_mod (b1) (b2) m h) := by
   apply And.intro
   . apply Iff.intro
@@ -832,4 +832,9 @@ theorem prop1_13_b (a b1 b2 m: ℤ)
       --have (one, two, three) := theorem1_11 a b
   . sorry
 
-/- next: integer rings, or skip and do primes-/
+/- next: integer rings, or skip and do primes
+Klavins feedback:
+-You have the machinery to prove that extended euclid faster than regular
+-Look at mathlib's exsting proofs for numbers; proofs should be simpler
+-Doing rings, through classes/instances (registering 0, 1, multiplicative inverse, etc) is powerful and a good idea
+-/
