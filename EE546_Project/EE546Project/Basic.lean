@@ -98,47 +98,6 @@ theorem prop1_4_c {a b c: ℤ } : a ∣ b → a ∣ c → a ∣ (b+c) ∧ a ∣ 
   intro h1 h2
   exact ⟨ Int.dvd_add h1 h2, Int.dvd_sub h1 h2⟩
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- Presentation Feb 20: Alexey's contribution
 /-
 How do you prove a recursive algorithm to converges in L∃∀N?
 1) Define the algorithm
@@ -157,43 +116,6 @@ def factorial1 (a:Nat) : Nat :=
 
 #eval factorial1 4
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- Of course, for this simple example L∃∀N can infer that it terminates by the single argument a and it knows that a-1 < a pretty trivially....
 
 def factorial2 (a:Nat) : Nat :=
@@ -210,41 +132,6 @@ def factorial3 (a:Nat) : Nat :=
 def factorial4 : Nat → Nat
   | 0 => 1
   | n + 1 => (n + 1) * factorial4 n
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /-
 So, we return to wanting to prove that we can compute the GCD of two numbers in a finite number of steps, this is called the Euclidean Algorithm
@@ -265,38 +152,6 @@ def theorem1_7 (a b : Nat) : Nat :=
 
 #eval theorem1_7 93 6
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /-
 There is a more computationally efficient definition for Euclidean's Algorithm that we can implement in lean as well:
 
@@ -304,38 +159,6 @@ Let a and b be positive integers. Then the equation
             au + bv = gcd(a, b)
 always has a solution in integers u and v.
 -/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- Helper for extended euclidean algorithm
 def theorem1_11_h (a b: Nat) (u x: Int) (y g : Nat) : (Nat × Int × Int) :=
@@ -364,44 +187,6 @@ def theorem1_11 (a b : Nat) : (Nat × Int × Int) :=
   theorem1_11_h a b u x y g
 
 #eval theorem1_11 93 6
-
-#eval 10/3
-#eval 10%3
-#eval (10/3*3+10%3)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /-
 For fun let's check how many times we recursed! Add a counter variable to both functions:
 -/
@@ -420,45 +205,6 @@ def gcd_slow_h (a b c : Nat) : Nat × Nat :=
 
 def gcd_slow (a b : Nat) : Nat × Nat :=
   gcd_slow_h a b 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- Helper for extended euclidean algorithm
 def gcd_fast_h (a b: Nat) (u x: Int) (y g c : Nat) : (Nat × Int × Int × Nat) :=
@@ -490,70 +236,6 @@ def gcd_fast (a b : Nat) : (Nat × Int × Int × Nat) :=
 #eval gcd_slow 93 6
 #eval gcd_fast 93 6
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /-
 What is the GCD of integers? It's just the GCD of their absolute values..
 -/
@@ -565,51 +247,6 @@ def gcd_int (a b : Int) :=
 #eval gcd_int (93) (-6)
 #eval gcd_int (-93) (6)
 #eval gcd_int (-93) (-6)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- Relatively Prime Definition
 def rel_prime (a b : Nat) :=
@@ -625,43 +262,6 @@ theorem rel_prime_ex1 : rel_prime 6 35 := by
 theorem rel_prime_ex2 : ¬ rel_prime 5 35 := by
   simp[rel_prime, theorem1_7]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- For fun: show that the first 100 numbers are relatively prime to 293 by raw computation using lists
 def numbers : List Nat := List.range 101 |>.drop 1
 def pairs : List (Nat × Nat) := numbers.map (λ n => (n,293))
@@ -675,34 +275,6 @@ def sum := sub1.foldl (λ acc x => acc + x) 0
 #eval sub1
 #eval sum
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- Definition. Let m ≥ 1 be an integer. We say that the integers a and b are
 -- congruent modulo m if their difference a − b is divisible by m. We write
 -- a ≡ b (mod m)
@@ -710,42 +282,6 @@ def sum := sub1.foldl (λ acc x => acc + x) 0
 -- modulus.
 def congru_mod (a b m: ℤ) (h: m ≥ 1) :=
   m ∣ (a-b)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- Proposition 1.13. Let m ≥ 1 be an integer.
 -- (a) If a1 ≡ a2 (mod m) and b1 ≡ b2 (mod m), then
@@ -763,40 +299,6 @@ theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
       rw[commu_sum,commu_sum2] at prop14c
       exact prop14c
     . exact dvd_mul_sub_mul h2 h3
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 -- Proposition 1.13. Let m ≥ 1 be an integer.
 -- (b) Let a be an integer. Then
