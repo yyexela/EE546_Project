@@ -338,25 +338,36 @@ always has a solution in integers u and v.
 
 
 -- Helper for extended euclidean algorithm
-def theorem1_11_h (a b u x y g : Nat) : (Nat × Nat × Nat) :=
+def theorem1_11_h (a b: Nat) (u x: Int) (y g : Nat) : (Nat × Int × Int) :=
   if y = 0 then
     ⟨g, u, ((g-a*u)/b)⟩
   else
-    let s := g / y
+    let q := g / y
     let t := g % y
-    theorem1_11_h a b x s t y
+    let s := u - q * x
+    let u := x
+    let g := y
+    let x := s
+    let y := t
+    theorem1_11_h a b u x y g
   termination_by y
   decreasing_by
-    rename_i hy
-    refine Nat.mod_lt g (by exact Nat.zero_lt_of_ne_zero hy)
+    rename_i g_old y_old x_old u_old hx_old
+    refine Nat.mod_lt u_old (by exact Nat.zero_lt_of_ne_zero hx_old)
 
 -- Extended Euclidean Algorithm
-def theorem1_11 (a b : Nat) : (Nat × Nat × Nat) :=
-  theorem1_11_h a b 1 0 b a
+def theorem1_11 (a b : Nat) : (Nat × Int × Int) :=
+  let u := 1
+  let g := a
+  let x := 0
+  let y := b
+  theorem1_11_h a b u x y g
 
 #eval theorem1_11 93 6
 
-
+#eval 10/3
+#eval 10%3
+#eval (10/3*3+10%3)
 
 
 
@@ -450,21 +461,31 @@ def gcd_slow (a b : Nat) : Nat × Nat :=
 
 
 -- Helper for extended euclidean algorithm
-def gcd_fast_h (a b u x y g c : Nat) : (Nat × Nat × Nat × Nat) :=
+def gcd_fast_h (a b: Nat) (u x: Int) (y g c : Nat) : (Nat × Int × Int × Nat) :=
   if y = 0 then
     ⟨g, u, ((g-a*u)/b), c⟩
   else
-    let s := g / y
+    let q := g / y
     let t := g % y
-    gcd_fast_h a b x s t y c
+    let s := u - q * x
+    let u := x
+    let g := y
+    let x := s
+    let y := t
+    gcd_fast_h a b u x y g c
   termination_by y
   decreasing_by
-    rename_i hy
-    refine Nat.mod_lt g (by exact Nat.zero_lt_of_ne_zero hy)
+    rename_i g_old y_old x_old u_old hx_old
+    refine Nat.mod_lt u_old (by exact Nat.zero_lt_of_ne_zero hx_old)
 
 -- Extended Euclidean Algorithm
-def gcd_fast (a b : Nat) : (Nat × Nat × Nat × Nat) :=
-  gcd_fast_h a b 1 0 b a 0
+def gcd_fast (a b : Nat) : (Nat × Int × Int × Nat) :=
+  let u := 1
+  let g := a
+  let x := 0
+  let y := b
+  let c := 0
+  gcd_fast_h a b u x y g c
 
 #eval gcd_slow 93 6
 #eval gcd_fast 93 6
