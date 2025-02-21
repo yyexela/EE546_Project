@@ -811,20 +811,31 @@ theorem prop1_13_b (a b1 b2 m: ℤ)
   apply And.intro
   . apply Iff.intro
     . intro ab_eq_1_mod
+      apply Exists.elim (ab_eq_1_mod)
+        (
+          by
+          intro b1 hb1
+          have m_div : m ∣ (a*b1 - 1) := hb1
+          let c : ℤ := by assumption
+          have c_times_m : m*c = (a*b1 - 1) := by rw[←dvd_of_mul_right_eq] at m_div
+          sorry
+        )
+      --simp
       sorry
     . intro gcd_eq_1
       --let u : ℤ
       --let m : ℤ
-      apply Exists.intro b
-      sorry
+      --apply Exists.intro b
+      --sorry
       have eq1 : a.gcd m = a * (a.gcdA m) + m * (a.gcdB m) := by exact Int.gcd_eq_gcd_ab a m
-      have eq2 : 1 = a * (a.gcdA m) + m * (a.gcdB m) := by rw[gcd_eq_1] at eq1; exact ffff /-first, rewrites ffff to equal 1, then uses exact-/
+      have eq2 : 1 = a * (a.gcdA m) + m * (a.gcdB m) := by rw[gcd_eq_1] at eq1; exact eq1 /-first, rewrites eq1 to equal 1, then uses exact-/
       have eq3: m * -(a.gcdB m) = (a * (a.gcdA m) - 1) := by linarith
-      have eq4: m ∣ (a * (a.gcdA m) - 1) := by exact dvd_of_mul_right_eq (-(a.gcdB m)) fffh
-      have eq5: congru_mod (a * (a.gcdA m)) 1 m (by trivial) := by exact
+      have eq4: m ∣ (a * (a.gcdA m) - 1) := by exact dvd_of_mul_right_eq (-(a.gcdB m)) eq3
+      have eq5: congru_mod (a * (a.gcdA m)) 1 m (by trivial) := by exact eq4
       let b := a.gcdA m
-      have eq6: congru_mod (a * (b)) 1 m (by trivial) := by exact
-      exact eq6
+      have eq6: congru_mod (a * (b)) 1 m (by trivial) := by exact eq5
+      apply Exists.intro b
+      exact
       --exact fffk
       --sorry
       --have ⟨ er,rt,yu ⟩ := Int.gcd_eq_gcd_ab a m
