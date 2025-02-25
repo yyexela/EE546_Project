@@ -832,6 +832,9 @@ namespace my_rings
   -- ZMod in Mathlib is defined using Commutative Ring
   #print CommRing
 
+  -- See:
+  -- https://github.com/leanprover-community/mathlib4/blob/d45d317d3256f91efd89409bbc981e28286530d9/Mathlib/Data/ZMod/Defs.lean#L122
+
   -- Example elements in ZMod' 5
   def m : ℕ := 5  -- Modulus
   def d : ZMod m := 2
