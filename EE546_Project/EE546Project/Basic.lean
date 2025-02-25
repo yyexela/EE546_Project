@@ -391,458 +391,127 @@ Klavins feedback:
 -/
 
 
-namespace my_rings
+/-
+Integer rings
 
-  /-
-  Integer rings
+Goal: "Ring of integers modulo m"
+-/
 
-  Goal: "Ring of integers modulo m"
-  -/
+-- Start with simple definition - ring mod 5
+structure IntRingMod5 where
+  elements : Fin 5
+  deriving Repr  -- For custom prints
 
-  -- Start with simple definition - ring mod 5
-  structure IntRingMod5 where
-    elements : Fin 5
-    deriving Repr  -- For custom prints
+-- Overwrite print
+instance : Repr IntRingMod5 where
+  reprPrec r _ := repr r.elements
 
-  -- Overwrite print
-  instance : Repr IntRingMod5 where
-    reprPrec r _ := repr r.elements
+def a : IntRingMod5 := 4 -- OfNat required
+def b : Fin 5 := 4
 
-  def a : IntRingMod5 := 4 -- OfNat required
-  def b : Fin 5 := 4
+-- Define OfNat
+instance (n : ℕ) : OfNat IntRingMod5 n where
+  ofNat := { elements := Fin.ofNat' 5 n }
 
+def c : IntRingMod5 := 4
+#eval c + c -- need to define addition
+#eval c * c -- need to define multiplication
 
+-- Define add and multiply
+#eval c + c
+#eval c * c
 
+-- Readable way
+def IntRingMod5.add (a b : IntRingMod5) : IntRingMod5 :=
+  {elements := a.elements + b.elements}
 
+-- Less readable way
+def IntRingMod5.add' (a b : IntRingMod5) : IntRingMod5 := match a, b with
+| ⟨x⟩, ⟨y⟩ => ⟨x + y⟩
 
+def IntRingMod5.mul (a b : IntRingMod5) : IntRingMod5 := match a, b with
+| ⟨x⟩, ⟨y⟩ => ⟨x * y⟩
 
+-- Show finset handles modulo already
+#eval IntRingMod5.add ⟨2⟩ ⟨3⟩  -- Output: ⟨0⟩ (since 2 + 3 = 5 ≡ 0 mod 5)
+#eval IntRingMod5.mul ⟨2⟩ ⟨3⟩  -- Output: ⟨0⟩ (since 2 * 3 = 6 ≡ 1 mod 5)
 
+-- not quite finished!
+#eval c + c
+#eval c * c
 
+-- Define HAdd
+instance : HAdd IntRingMod5 IntRingMod5 IntRingMod5 where
+  hAdd a b := { elements := a.elements + b.elements }
 
+-- Define HMul
+instance : HMul IntRingMod5 IntRingMod5 IntRingMod5 where
+  hMul a b := { elements := a.elements * b.elements }
 
+#eval c
+#eval c + c -- 4 + 4 = 8 = 3 + 5 = 3 mod 5
+#eval c * c -- 4 * 4 = 16 = 1 + 15 = 1 mod 5
 
+-- General ring mod m
+def IntRingModM : ℕ → Type
+  | 0 => ℤ
+  | n + 1 => Fin (n + 1)
 
+def a1 : IntRingModM 5 := 4 -- OfNat required
 
+instance (n m : ℕ) : OfNat (IntRingModM m) n where
+  ofNat :=  match m with
+  | 0 => Int.ofNat n
+  | Nat.succ x => Fin.ofNat' (Nat.succ x) n
 
+def c1 : IntRingModM 5 := 4
+#eval c1
 
+-- Define add and multiply
 
+-- Readable way
+def IntRingModM.add {m : ℕ} (a b : IntRingModM m) : IntRingModM m := match m with
+| 0 => Int.add a b
+| Nat.succ _ => Fin.add a b
 
+-- Readable way
+def IntRingModM.mul {m : ℕ} (a b : IntRingModM m) : IntRingModM m := match m with
+| 0 => Int.mul a b
+| Nat.succ _ => Fin.mul a b
 
+-- Make lean parse understand "+" and "*"
 
+-- Define HAdd
+instance {m : ℕ} : HAdd (IntRingModM m) (IntRingModM m) (IntRingModM m) where
+  hAdd a b := IntRingModM.add a b
 
+-- Define HAdd
+instance {m : ℕ} : HMul (IntRingModM m) (IntRingModM m) (IntRingModM m) where
+  hMul a b := IntRingModM.mul a b
 
+#eval c1
+#eval c1 + c1 -- 4 + 4 = 8 = 3 + 5 = 3 mod 5
+#eval c1 * c1 -- 4 * 4 = 16 = 1 + 15 = 1 mod 5
 
+#eval (2 : (IntRingModM 0)) + (8 : (IntRingModM 0))
+#eval (2 : (IntRingModM 10)) + (8 : (IntRingModM 10))
+#eval (2 : (IntRingModM 10)) * (8 : (IntRingModM 10))
 
+-- ZMod in Mathlib is defined using Commutative Ring
+#print CommRing
 
+-- See:
+-- https://github.com/leanprover-community/mathlib4/blob/d45d317d3256f91efd89409bbc981e28286530d9/Mathlib/Data/ZMod/Defs.lean#L122
 
+-- Example elements in ZMod' 5
+def m : ℕ := 5  -- Modulus
+def d : ZMod m := 2
+def e : ZMod m := 3
 
+#eval d + e
 
+#eval ZMod.inv 5 3
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  -- Define OfNat
-  instance (n : ℕ) : OfNat IntRingMod5 n where
-    ofNat := { elements := Fin.ofNat' 5 n }
-
-  def c : IntRingMod5 := 4
-  #eval c + c -- need to define addition
-  #eval c * c -- need to define multiplication
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  -- Define add and multiply
-  #eval c + c
-  #eval c * c
-
-  -- Readable way
-  def IntRingMod5.add (a b : IntRingMod5) : IntRingMod5 :=
-    {elements := a.elements + b.elements}
-
-  -- Less readable way
-  def IntRingMod5.add' (a b : IntRingMod5) : IntRingMod5 := match a, b with
-  | ⟨x⟩, ⟨y⟩ => ⟨x + y⟩
-
-  def IntRingMod5.mul (a b : IntRingMod5) : IntRingMod5 := match a, b with
-  | ⟨x⟩, ⟨y⟩ => ⟨x * y⟩
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  -- Show finset handles modulo already
-  #eval IntRingMod5.add ⟨2⟩ ⟨3⟩  -- Output: ⟨0⟩ (since 2 + 3 = 5 ≡ 0 mod 5)
-  #eval IntRingMod5.mul ⟨2⟩ ⟨3⟩  -- Output: ⟨0⟩ (since 2 * 3 = 6 ≡ 1 mod 5)
-
-  -- not quite finished!
-  #eval c + c
-  #eval c * c
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  -- Define HAdd
-  instance : HAdd IntRingMod5 IntRingMod5 IntRingMod5 where
-    hAdd a b := { elements := a.elements + b.elements }
-
-  -- Define HMul
-  instance : HMul IntRingMod5 IntRingMod5 IntRingMod5 where
-    hMul a b := { elements := a.elements * b.elements }
-
-  #eval c
-  #eval c + c -- 4 + 4 = 8 = 3 + 5 = 3 mod 5
-  #eval c * c -- 4 * 4 = 16 = 1 + 15 = 1 mod 5
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  -- General ring mod m
-  def IntRingModM : ℕ → Type
-    | 0 => ℤ
-    | n + 1 => Fin (n + 1)
-
-  def a1 : IntRingModM 5 := 4 -- OfNat required
-
-  instance (n m : ℕ) : OfNat (IntRingModM m) n where
-    ofNat :=  match m with
-    | 0 => Int.ofNat n
-    | Nat.succ x => Fin.ofNat' (Nat.succ x) n
-
-  def c1 : IntRingModM 5 := 4
-  #eval c1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  -- Define add and multiply
-
-  -- Readable way
-  def IntRingModM.add {m : ℕ} (a b : IntRingModM m) : IntRingModM m := match m with
-  | 0 => Int.add a b
-  | Nat.succ _ => Fin.add a b
-
-  -- Readable way
-  def IntRingModM.mul {m : ℕ} (a b : IntRingModM m) : IntRingModM m := match m with
-  | 0 => Int.mul a b
-  | Nat.succ _ => Fin.mul a b
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  -- Make lean parse understand "+" and "*"
-
-  -- Define HAdd
-  instance {m : ℕ} : HAdd (IntRingModM m) (IntRingModM m) (IntRingModM m) where
-    hAdd a b := IntRingModM.add a b
-
-  -- Define HAdd
-  instance {m : ℕ} : HMul (IntRingModM m) (IntRingModM m) (IntRingModM m) where
-    hMul a b := IntRingModM.mul a b
-
-  #eval c1
-  #eval c1 + c1 -- 4 + 4 = 8 = 3 + 5 = 3 mod 5
-  #eval c1 * c1 -- 4 * 4 = 16 = 1 + 15 = 1 mod 5
-
-  #eval (2 : (IntRingModM 0)) + (8 : (IntRingModM 0))
-  #eval (2 : (IntRingModM 10)) + (8 : (IntRingModM 10))
-  #eval (2 : (IntRingModM 10)) * (8 : (IntRingModM 10))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  -- ZMod in Mathlib is defined using Commutative Ring
-  #print CommRing
-
-  -- See:
-  -- https://github.com/leanprover-community/mathlib4/blob/d45d317d3256f91efd89409bbc981e28286530d9/Mathlib/Data/ZMod/Defs.lean#L122
-
-  -- Example elements in ZMod' 5
-  def m : ℕ := 5  -- Modulus
-  def d : ZMod m := 2
-  def e : ZMod m := 3
-
-  #eval d + e
-
-  #eval ZMod.inv 5 3
-
-
-end my_rings
+-- TODO:
+-- Use "CommRing.ofMinimalAxioms"
+-- Make nice for presentation
