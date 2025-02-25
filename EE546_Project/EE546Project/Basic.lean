@@ -389,3 +389,114 @@ Klavins feedback:
 -Doing rings, through classes/instances (registering 0, 1, multiplicative inverse, etc) is powerful and a good idea
 -Start with simpler proofs like gcd(a,b)=gcd(b,a) and build up
 -/
+
+
+namespace my_rings
+
+  /-
+  Integer rings
+
+  Note: mathlib definition:
+
+  def ZMod : ℕ → Type
+    | 0 => ℤ
+    | n + 1 => Fin (n + 1)
+
+  "Ring of integers modulo m"
+  -/
+
+  -- Start with simple definition
+  structure IntRingMod5 where
+    elements : Fin 5
+    deriving Repr  -- For custom prints
+
+  -- Overwrite print
+  instance : Repr IntRingMod5 where
+    reprPrec r _ := repr r.elements
+
+  def a : IntRingMod5 := 4 -- OfNat required
+  def b : Fin 5 := 4
+
+  -- Require [NeZero n] so that elements is not empty
+  instance (n : ℕ) [NeZero n] : OfNat IntRingMod5 n where
+    ofNat := { elements := Fin.ofNat' 5 n }
+
+  def c : IntRingMod5 := 4
+  #eval c + c -- define addition
+  #eval c * c -- define multiplication
+
+  -- Readable way
+  def IntRingMod5.add (a b : IntRingMod5) : IntRingMod5 :=
+    {elements := a.elements + b.elements}
+
+  -- Less readable way
+  def IntRingMod5.add' (a b : IntRingMod5) : IntRingMod5 := match a, b with
+  | ⟨x⟩, ⟨y⟩ => ⟨x + y⟩
+
+  def IntRingMod5.mul (a b : IntRingMod5) : IntRingMod5 := match a, b with
+  | ⟨x⟩, ⟨y⟩ => ⟨x * y⟩
+
+  -- Show finset handles modulo already
+  #eval IntRingMod5.add ⟨2⟩ ⟨3⟩  -- Output: ⟨0⟩ (since 2 + 3 = 5 ≡ 0 mod 5)
+  #eval IntRingMod5.mul ⟨2⟩ ⟨3⟩  -- Output: ⟨0⟩ (since 2 + 3 = 5 ≡ 0 mod 5)
+
+  #eval c + c
+
+  -- Define HAdd
+  instance : HAdd IntRingMod5 IntRingMod5 IntRingMod5 where
+    hAdd a b := { elements := a.elements + b.elements }
+
+  -- Define HMul
+  instance : HMul IntRingMod5 IntRingMod5 IntRingMod5 where
+    hMul a b := { elements := a.elements * b.elements }
+
+  #eval c
+  #eval c + c -- 4 + 4 = 8 = 3 + 5 = 3 mod 5
+  #eval c * c -- 4 * 4 = 16 = 1 + 15 = 1 mod 5
+
+
+
+
+
+
+
+  -- Start with simple definition
+  def IntRingModM : ℕ → Type
+    | 0 => ℤ
+    | n + 1 => Fin (n + 1)
+
+  -- Overwrite print
+  instance : Repr IntRingMod5 where
+    reprPrec r _ := repr r.elements
+
+  def a1 : IntRingModM 5 := 4 -- OfNat required
+
+  -- Require [NeZero n] so that elements is not empty
+  instance (n m : ℕ) : OfNat (IntRingModM m) n where
+    ofNat :=  match m with
+    | 0 => ℤ
+    | Nat.succ x => ⟨x, by exact lt_add_one x⟩
+
+  def c1 : IntRingModM 5 := 4
+
+
+
+
+
+
+
+
+  -- ZMod in Mathlib is defined using Commutative Ring
+  #print CommRing
+
+  -- Example elements in ZMod' 5
+  def m : ℕ := 5  -- Modulus
+  def d : ZMod m := 2
+  def e : ZMod m := 3
+
+  #eval d + e
+
+  #eval ZMod.inv 5 3
+
+
+end my_rings
