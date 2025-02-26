@@ -19,6 +19,7 @@ import Mathlib.Algebra.Divisibility.Basic
 import Mathlib.Tactic
 import Mathlib.Data.Int.Defs
 import Mathlib.Data.Nat.Defs
+import Mathlib.Algebra.Ring.MinimalAxioms
 open Classical
 
 /-
@@ -308,6 +309,34 @@ theorem helper_1_13_b (a b c m: ℤ): (Int.gcd a m) ∣ (a*b) := by sorry
 -- (b) Let a be an integer. Then
 -- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
 
+theorem eq_iff_modEq_nat (n : ℕ) {a b : ℕ} : (a : ZMod n) = b ↔ a ≡ b [MOD n] := by
+  cases n
+  · simp [Nat.ModEq, Int.natCast_inj, Nat.mod_zero]
+  · rw [Fin.ext_iff, Nat.ModEq, ← val_natCast, ← val_natCast]
+    exact Iff.rfl
+
+set_option diagnostics true
+theorem prop1_13_b_1 (a b: ℤ) (m: ℕ) (hm: m ≥ 1) : ((a * b: ZMod m) = 1) ↔ (Int.gcd a b = 1) := by
+  apply Iff.intro
+  . intro hf
+    rw[Int.gcd]
+    rw[Nat.gcd]
+    if a.natAbs = 0 then
+      rename_i ha
+      rw[ha]
+      simp[Int.natAbs_zero] at ha
+      simp[ha] at hf
+      by_cases hm1 : m = 1
+      . simp
+        by_cases hb1 : b > 0
+        . sorry
+        . sorry
+      . sorry
+    else sorry
+  . sorry
+
+  #eval (1 : ZMod 1)
+
 -- Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 -- the (multiplicative) inverse of a modulo m.
 theorem prop1_13_b (a b1 b2 m: ℤ)
@@ -515,3 +544,23 @@ def e : ZMod m := 3
 -- TODO:
 -- Use "CommRing.ofMinimalAxioms"
 -- Make nice for presentation
+
+/-
+theorem IntRingModM.add_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a + b + c = a + (b + c) := by
+  intro ha hb hc
+  match m with
+  | 0 => sorry
+  | succ x => sorry
+
+--noncomputable
+set_option diagnostics true
+instance {m : ℕ} : CommRing (IntRingModM m) :=
+  CommRing.ofMinimalAxioms
+    (IntRingModM.add_assoc)
+    sorry
+    sorry
+    sorry
+    sorry
+    sorry
+    sorry
+-/
