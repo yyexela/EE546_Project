@@ -303,7 +303,7 @@ theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
 
 
 /-gcd(a,m) divides a*b - c*m (any linear combination of a,m)-/
-theorem helper_1_13_b (a b c m: ℤ): (Int.gcd a m) ∣ (a*b) := by sorry
+theorem helper_1_13_b (a b c m: ℤ): (Int.gcd a m) ∣ (a*b - c*m) := by sorry
 
 -- Proposition 1.13. Let m ≥ 1 be an integer.
 -- (b) Let a be an integer. Then
