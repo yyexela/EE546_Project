@@ -564,3 +564,70 @@ instance {m : ℕ} : CommRing (IntRingModM m) :=
     sorry
     sorry
 -/
+
+--  The Fast Powering Algorithm: computing g^A (mod N)
+
+--  Ex: 3^(218) mod 1000
+
+--  Ex: 218 = 2 + 2^3 + 2^4 + 2^6 + 2^7
+
+--  Ex: 3^218 = 3^(2 + 2^3 + 2^4 + 2^6 + 2^7) mod 1000
+--            = (3^2)(3^2^3)(3^2^4)(3^2^6)(3^2^7) mod 1000
+
+/-  Use relationship: 3^2^0 = 3  = k
+                      3^2^1 = 9  = k^2
+                      3^2^2 = 81 = (k^2)^2
+                      3^2^3 = 6516 = ((k^2)^2)^2-/
+
+--  Step 1. Compute the binary expansion of A as
+--  A = A0 + A1×2 + A2×2^2 + A3×2^3 + ··· + A_r×(2^r) with A0,...,Ar ∈{0,1},
+--  where we may assume that Ar =1.
+
+--  Step 2. Compute the powers g^2^i (mod N) for 0 ≤ i ≤ r by successive squaring,
+--  a0 ≡ g                    (mod N)
+--  a1 ≡ a0^2 ≡ g^2           (mod N)
+--  a2 ≡ a1^2 ≡ g^2^2         (mod N)
+--  a3 ≡ a2^2 ≡ g^2^3         (mod N)
+--  ...
+--  a_r ≡ [a_(r-1)]^2 ≡ g^2^r (mod N)
+--
+--  Each term is the square of the previous one, so this requires r
+--  multiplications.
+
+--  Step 3. Compute g^A (mod N) usingtheformula
+--  g^A = g^( A0 + A1×2 + A2×2^2 + A3×2^3 + ··· + A_r×(2^r) )
+--
+--      = g^(A0) × (g^2)^(A1) × (g^2^2)^(A2) + ... (g^2^r)^(A_r)
+--
+--      = a0^(A0) × a1^(A1) × a2^(A2) + ... a_r^(A_r) (mod N)
+--
+/- A ≥ 0 unstated in book, assumed due to binary expansion being nonnegative
+
+Ex of binary exp: 19 = 1(1) + 2(1) + 4(0) + 8(0) + 16(1)
+19 mod 2 = 1
+19/2 = 9
+9 mod 2 = 1
+9/2 = 4
+4 mod 2 = 0
+4/2 = 2
+2 mod 2 = 0
+2/2 = 1
+1 mod 2 = 1
+1/2 = 0 -> stop: 10011
+
+-/
+
+def nat_to_binary (n : ℕ) : List ℕ :=
+  if n = 0 then []
+  else nat_to_binary (n / 2) ++ [n % 2] /-++ means append-/
+
+#eval nat_to_binary 5
+#eval nat_to_binary 16
+#eval nat_to_binary 19
+
+def g_2_i (L : List ℕ) (r g i : ℕ): List ℕ :=
+  /-for intended algorithm, recursion needs to go from 0 to r, not downwards-/
+  sorry
+
+def fast_pow_alg (g N: ℤ) (A : ℕ) (L: List ℕ): ℤ :=
+  sorry
