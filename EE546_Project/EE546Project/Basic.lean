@@ -337,6 +337,60 @@ theorem prop1_13_b_1 (a b: ℤ) (m: ℕ) (hm: m ≥ 1) : ((a * b: ZMod m) = 1) �
 
   #eval (1 : ZMod 1)
 
+-- This works
+
+theorem prop1_13_klavins {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → Int.gcd a m = 1 := by
+
+  intro h
+  apply Int.modEq_iff_add_fac.mp at h
+
+  obtain ⟨ k, hk ⟩ := h
+
+  rw[←Int.isCoprime_iff_gcd_eq_one]
+
+  use b
+  use k
+  rw[hk]
+
+  ring
+
+
+-- Here's a helper for for another version of the proof below
+
+theorem helperklavins {d a b : ℤ} : d∣a → d∣b → ∀ x y, d ∣ a*x + b*y := by
+
+intro ha hb x y
+
+simp[Int.dvd_def] at ha hb
+
+obtain ⟨ k, hk ⟩ := ha
+obtain ⟨ j, hj ⟩ := hb
+
+rw[hk,hj]
+
+have : d * k * x + d * j * y = d*(k*x+j*y) := by ring
+
+rw[this]
+
+exact Int.dvd_mul_right d (k * x + j * y)
+
+
+theorem prop1_13_klavins_2 {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := by
+
+intro h
+
+have h' := Int.modEq_iff_add_fac.mp h
+
+obtain ⟨ k, hk ⟩ := h'
+
+have g1 : (gcd a m) ∣ a := by exact gcd_dvd_left a m
+have g2 : (gcd a m) ∣ m := by exact gcd_dvd_right a m
+have g3 : (gcd a m) ∣ a * b + m * k := by apply helperklavins g1 g2
+
+rw[←hk] at g3
+
+sorry -- should be able to show g3 → gcd a m = 1
+
 -- Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 -- the (multiplicative) inverse of a modulo m.
 theorem prop1_13_b (a b1 b2 m: ℤ)
@@ -631,3 +685,73 @@ def g_2_i (L : List ℕ) (r g i : ℕ): List ℕ :=
 
 def fast_pow_alg (g N: ℤ) (A : ℕ) (L: List ℕ): ℤ :=
   sorry
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/-Proposition 1.19
+Let p be a prime number, and suppose that p divides the product ab of two integers a and b. Then p divides at least one of a and b.
+
+More generally, if p divides a product of integers, say p ∣ a_1 × a_2 ... a_n
+
+then p divides at least one of the individual a_i .
+-/
+def int_prime (p: ℤ) :=
+  ∀ m : ℤ, m ∣ p → (m = 1) ∨ (m = p)
+  -- apply Or.elim h
+  -- . sorry
+  -- . sorry
+
+theorem prop1_19_a (a b: ℤ) (p: ℕ)
+  (h: Nat.Prime p)
+  /- ofNat needed for lean to recgonize that Nat p is also an Int-/
+  (h2: Int.ofNat p ∣ a*b) : (Int.ofNat p ∣ a) ∨ (Int.ofNat  p ∣ b) := by
+  sorry
+
+
+
+/-
+Theorem 1.20 (The Fundamental Theorem of Arithmetic).
+Let a ≥ 2 be an integer. Then a can be factored as a product of prime numbers
+
+a = p_1^e_1 × p_2^e^2 ... p_r^e_r
+
+Further, other than rearranging the order of the primes, this factorization into prime powers is unique.
+-/
+theorem prop_1_20 (a : ℤ) (h: a ≥ 2) :
+
+/-Next: more primes, and using fields/groups/rings in proofs-/
