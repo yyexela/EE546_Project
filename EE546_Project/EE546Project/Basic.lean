@@ -480,7 +480,12 @@ Integer rings
 Goal: "Ring of integers modulo m"
 -/
 
--- Start with simple definition - ring mod 5
+/-
+Start with simple definition:
+
+Create an integer ring modulo 5
+-/
+
 structure IntRingMod5 where
   elements : Fin 5
   deriving Repr  -- For custom prints
@@ -489,20 +494,47 @@ structure IntRingMod5 where
 instance : Repr IntRingMod5 where
   reprPrec r _ := repr r.elements
 
+/-
+Problem in the code below:
+-/
+
 def a : IntRingMod5 := 4 -- OfNat required
 def b : Fin 5 := 4
+
+/-
+Error:
+```
+failed to synthesize
+  OfNat IntRingMod5 4
+numerals are polymorphic in Lean, but the numeral `4` cannot be used in a context where the expected type is
+  IntRingMod5
+due to the absence of the instance above
+```
+
+So, we need to define `OfNat`:
+-/
 
 -- Define OfNat
 instance (n : ℕ) : OfNat IntRingMod5 n where
   ofNat := { elements := Fin.ofNat' 5 n }
 
 def c : IntRingMod5 := 4
+
+/-
+Great! So this code works, now we want to define addition and multiplication. The below code does not work.
+-/
 #eval c + c -- need to define addition
 #eval c * c -- need to define multiplication
 
--- Define add and multiply
-#eval c + c
-#eval c * c
+/-
+Error:
+```
+failed to synthesize
+  HAdd IntRingMod5 IntRingMod5 ?m.203412
+```
+
+So, let's define add and mul:
+-/
 
 -- Readable way
 def IntRingMod5.add (a b : IntRingMod5) : IntRingMod5 :=
@@ -516,12 +548,26 @@ def IntRingMod5.mul (a b : IntRingMod5) : IntRingMod5 := match a, b with
 | ⟨x⟩, ⟨y⟩ => ⟨x * y⟩
 
 -- Show finset handles modulo already
-#eval IntRingMod5.add ⟨2⟩ ⟨3⟩  -- Output: ⟨0⟩ (since 2 + 3 = 5 ≡ 0 mod 5)
-#eval IntRingMod5.mul ⟨2⟩ ⟨3⟩  -- Output: ⟨0⟩ (since 2 * 3 = 6 ≡ 1 mod 5)
+#eval IntRingMod5.add ⟨2⟩ ⟨3⟩  -- Output: 0 (since 2 + 3 = 5 ≡ 0 mod 5)
+#eval IntRingMod5.mul ⟨2⟩ ⟨3⟩  -- Output: 0 (since 2 * 3 = 6 ≡ 1 mod 5)
+
+/-
+The above code works, but lean still doesn't know what + and * are for our new type!
+-/
 
 -- not quite finished!
 #eval c + c
 #eval c * c
+
+/-
+Error:
+```
+failed to synthesize
+  HAdd IntRingMod5 IntRingMod5 ?m.206704
+```
+
+Need to define HAdd and HMul:
+-/
 
 -- Define HAdd
 instance : HAdd IntRingMod5 IntRingMod5 IntRingMod5 where
@@ -531,16 +577,41 @@ instance : HAdd IntRingMod5 IntRingMod5 IntRingMod5 where
 instance : HMul IntRingMod5 IntRingMod5 IntRingMod5 where
   hMul a b := { elements := a.elements * b.elements }
 
+/-
+This now works!:
+-/
+
 #eval c
 #eval c + c -- 4 + 4 = 8 = 3 + 5 = 3 mod 5
 #eval c * c -- 4 * 4 = 16 = 1 + 15 = 1 mod 5
+
+/-
+Let's now extend this to general rings mod m, instead of just rings mod 5...
+-/
 
 -- General ring mod m
 def IntRingModM : ℕ → Type
   | 0 => ℤ
   | n + 1 => Fin (n + 1)
 
+/-
+Need to define OfNat again...
+-/
+
 def a1 : IntRingModM 5 := 4 -- OfNat required
+
+/-
+Error:
+```
+failed to synthesize
+  OfNat (IntRingModM 5) 4
+numerals are polymorphic in Lean, but the numeral `4` cannot be used in a context where the expected type is
+  IntRingModM 5
+due to the absence of the instance above
+```
+
+Defining OfNat:
+-/
 
 instance (n m : ℕ) : OfNat (IntRingModM m) n where
   ofNat :=  match m with
@@ -549,6 +620,12 @@ instance (n m : ℕ) : OfNat (IntRingModM m) n where
 
 def c1 : IntRingModM 5 := 4
 #eval c1
+
+/-
+This code works!
+
+Let's define add and mul as before
+-/
 
 -- Define add and multiply
 
@@ -562,8 +639,11 @@ def IntRingModM.mul {m : ℕ} (a b : IntRingModM m) : IntRingModM m := match m w
 | 0 => Int.mul a b
 | Nat.succ _ => Fin.mul a b
 
--- Make lean parse understand "+" and "*"
+/-
+Once again, make + and * understandable by the interpreter
+-/
 
+-- Make lean parse understand "+" and "*"
 -- Define HAdd
 instance {m : ℕ} : HAdd (IntRingModM m) (IntRingModM m) (IntRingModM m) where
   hAdd a b := IntRingModM.add a b
@@ -572,6 +652,10 @@ instance {m : ℕ} : HAdd (IntRingModM m) (IntRingModM m) (IntRingModM m) where
 instance {m : ℕ} : HMul (IntRingModM m) (IntRingModM m) (IntRingModM m) where
   hMul a b := IntRingModM.mul a b
 
+/-
+The below code works!
+-/
+
 #eval c1
 #eval c1 + c1 -- 4 + 4 = 8 = 3 + 5 = 3 mod 5
 #eval c1 * c1 -- 4 * 4 = 16 = 1 + 15 = 1 mod 5
@@ -579,6 +663,10 @@ instance {m : ℕ} : HMul (IntRingModM m) (IntRingModM m) (IntRingModM m) where
 #eval (2 : (IntRingModM 0)) + (8 : (IntRingModM 0))
 #eval (2 : (IntRingModM 10)) + (8 : (IntRingModM 10))
 #eval (2 : (IntRingModM 10)) * (8 : (IntRingModM 10))
+
+/-
+How are integer rings defined in Mathlib? They are defined as `ZMod` which is a `CommRing`...
+-/
 
 -- ZMod in Mathlib is defined using Commutative Ring
 #print CommRing
@@ -595,9 +683,22 @@ def e : ZMod m := 3
 
 #eval ZMod.inv 5 3
 
--- TODO:
--- Use "CommRing.ofMinimalAxioms"
--- Make nice for presentation
+/-
+For future work, we need to create our IntRingModM to become a CommRing with `CommRing.ofMinimalAxioms`:
+
+```
+{R : Type u} [Add R] [Mul R] [Neg R] [Zero R] [One R]
+(add_assoc : ∀ (a b c : R), a + b + c = a + (b + c))
+(zero_add : ∀ (a : R), 0 + a = a)
+(neg_add_cancel : ∀ (a : R), -a + a = 0)
+(mul_assoc : ∀ (a b c : R), a * b * c = a * (b * c))
+(mul_comm : ∀ (a b : R), a * b = b * a)
+(one_mul : ∀ (a : R), 1 * a = a)
+(left_distrib : ∀ (a b c : R), a * (b + c) = a * b + a * c)
+: CommRing R
+```
+-/
+
 
 /-
 theorem IntRingModM.add_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a + b + c = a + (b + c) := by
