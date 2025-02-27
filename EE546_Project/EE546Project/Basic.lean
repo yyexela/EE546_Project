@@ -346,7 +346,7 @@ theorem prop1_13_klavins {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → Int.gcd a m = 1 :
 
   obtain ⟨ k, hk ⟩ := h
 
-  rw[←Int.isCoprime_iff_gcd_eq_one]
+  rw[leftarr Int.isCoprime_iff_gcd_eq_one]
 
   use b
   use k
@@ -387,7 +387,7 @@ have g1 : (gcd a m) ∣ a := by exact gcd_dvd_left a m
 have g2 : (gcd a m) ∣ m := by exact gcd_dvd_right a m
 have g3 : (gcd a m) ∣ a * b + m * k := by apply helperklavins g1 g2
 
-rw[←hk] at g3
+rw[leftarr hk] at g3
 
 sorry -- should be able to show g3 → gcd a m = 1
 
@@ -742,6 +742,7 @@ theorem prop1_19_a (a b: ℤ) (p: ℕ)
   (h2: Int.ofNat p ∣ a*b) : (Int.ofNat p ∣ a) ∨ (Int.ofNat  p ∣ b) := by
   sorry
 
+/-Klavins: can maybe prove for nat a,b easier-/
 
 
 /-
@@ -754,4 +755,4 @@ Further, other than rearranging the order of the primes, this factorization into
 -/
 theorem prop_1_20 (a : ℤ) (h: a ≥ 2) :
 
-/-Next: more primes, and using fields/groups/rings in proofs-/
+/-Next: more primes, and using fields/groups/rings in proofs, make proofs shorter-/
