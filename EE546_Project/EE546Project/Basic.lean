@@ -13,6 +13,11 @@
   Henry Do
   Alexey Yermakov
 
+  Markdown generated using:
+  ```bash
+  python dm.py ./Basic.lean > Basic.md
+  ```
+
 -/
 
 import Mathlib.Algebra.Divisibility.Basic
