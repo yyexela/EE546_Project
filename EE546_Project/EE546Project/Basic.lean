@@ -635,14 +635,44 @@ Let's define add and mul as before
 -- Define add and multiply
 
 -- Readable way
+set_option diagnostics.threshold 100
 def IntRingModM.add {m : ℕ} (a b : IntRingModM m) : IntRingModM m := match m with
 | 0 => Int.add a b
 | Nat.succ _ => Fin.add a b
 
 -- Readable way
+set_option diagnostics.threshold 100
 def IntRingModM.mul {m : ℕ} (a b : IntRingModM m) : IntRingModM m := match m with
 | 0 => Int.mul a b
 | Nat.succ _ => Fin.mul a b
+
+set_option diagnostics.threshold 200
+instance {m : ℕ} : CoeOut (IntRingModM m) Nat where
+  coe a := match m with
+  | 0 => Int.toNat a
+  | Nat.succ _ => Fin.val a
+
+instance {m : ℕ} : CoeOut (IntRingModM m) Int where
+  coe a := match m with
+  | 0 => Int.toNat a
+  | Nat.succ _ => Fin.val a
+
+/-
+instance {m : ℕ} : Coe (IntRingModM m) Nat where
+  coe a := by
+    have b := (a : Fin m)
+    have c := b.val
+    exact c
+-/
+
+set_option diagnostics.threshold 200
+
+-- Readable way
+set_option diagnostics.threshold 100
+def IntRingModM.neg {m : ℕ} (a : IntRingModM m) : IntRingModM m := match m with
+| 0 => 0
+| Nat.succ n => by
+  exact (((n+1) - (a : Nat)  : Fin (n+1) ): IntRingModM (n+1))
 
 /-
 Once again, make + and * understandable by the interpreter
@@ -653,9 +683,24 @@ Once again, make + and * understandable by the interpreter
 instance {m : ℕ} : HAdd (IntRingModM m) (IntRingModM m) (IntRingModM m) where
   hAdd a b := IntRingModM.add a b
 
+instance {m : ℕ} : Add (IntRingModM m) where
+  add a b := IntRingModM.add a b
+
 -- Define HAdd
 instance {m : ℕ} : HMul (IntRingModM m) (IntRingModM m) (IntRingModM m) where
   hMul a b := IntRingModM.mul a b
+
+instance {m : ℕ} : Mul (IntRingModM m) where
+  mul a b := IntRingModM.mul a b
+
+instance {m : ℕ} : Neg (IntRingModM m) where
+  neg a := IntRingModM.neg a
+
+
+#eval (1 : ZMod 5)
+#eval (1 : IntRingModM 5)
+#eval (-102 : ZMod 5)
+#eval (-102 : IntRingModM 5)
 
 /-
 The below code works!
@@ -704,26 +749,45 @@ For future work, we need to create our IntRingModM to become a CommRing with `Co
 ```
 -/
 
+#eval (3 : ZMod 5)
+#eval (3 : IntRingModM 5)
+#eval (-3 : ZMod 5)
+#eval (-3 : IntRingModM 5)
 
-/-
+set_option diagnostics.threshold 100
 theorem IntRingModM.add_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a + b + c = a + (b + c) := by
-  intro ha hb hc
-  match m with
-  | 0 => sorry
-  | succ x => sorry
+  sorry
+
+theorem IntRingModM.zero_add {m : ℕ} : ∀ (a : IntRingModM m), 0 + a = a := by
+  sorry
+
+theorem IntRingModM.neg_add_cancel {m : ℕ} : ∀ (a : IntRingModM m), -a + a = 0 := by
+  sorry
+
+theorem IntRingModM.mul_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a * b * c = a * (b * c) := by
+  sorry
+
+theorem IntRingModM.mul_comm {m : ℕ} : ∀ (a b : IntRingModM m), a * b = b * a := by
+  sorry
+
+theorem IntRingModM.one_mul {m : ℕ} : ∀ (a : IntRingModM m), 1 * a = a := by
+  sorry
+
+theorem IntRingModM.left_distrib {m : ℕ} : ∀ (a b c : IntRingModM m), a * (b + c) = a * b + a * c := by
+  sorry
+
 
 --noncomputable
 set_option diagnostics true
 instance {m : ℕ} : CommRing (IntRingModM m) :=
   CommRing.ofMinimalAxioms
-    (IntRingModM.add_assoc)
-    sorry
-    sorry
-    sorry
-    sorry
-    sorry
-    sorry
--/
+    IntRingModM.add_assoc
+    IntRingModM.zero_add
+    IntRingModM.neg_add_cancel
+    IntRingModM.mul_assoc
+    IntRingModM.mul_comm
+    IntRingModM.one_mul
+    IntRingModM.left_distrib
 
 --  The Fast Powering Algorithm: computing g^A (mod N)
 
