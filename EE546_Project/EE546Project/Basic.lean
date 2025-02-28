@@ -772,6 +772,10 @@ theorem fin_zero_add {n : Nat} (ha : Fin (n + 1)) : 0 + ha = ha := by
   apply Fin.ext
   simp [Fin.add_def]
 
+theorem fin_neg_add_cancel {n : Nat} (ha : Fin (n + 1)) : -ha + ha = 0 := by
+  apply Fin.ext
+  simp [Fin.add_def]
+
 set_option diagnostics.threshold 5000
 theorem IntRingModM.add_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a + b + c = a + (b + c) := by
   match m with
@@ -799,8 +803,23 @@ theorem IntRingModM.zero_add {m : ℕ} : ∀ (a : IntRingModM m), 0 + a = a := b
     simp at ha
     exact fin_zero_add ha
 
+theorem neg_add_cancel' {a : ℤ} : -a + a = 0 := by
+  exact Int.add_left_neg a
+
+example : ()
+
 theorem IntRingModM.neg_add_cancel {m : ℕ} : ∀ (a : IntRingModM m), -a + a = 0 := by
-  sorry
+  match m with
+  | 0 =>
+    intro ha
+    unfold IntRingModM at ha
+    simp at ha
+    apply Int.add_left_neg
+  | Nat.succ n =>
+    intro ha
+    unfold IntRingModM at ha
+    simp at ha
+    apply Group.neg_add_cancel
 
 theorem IntRingModM.mul_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a * b * c = a * (b * c) := by
   sorry
