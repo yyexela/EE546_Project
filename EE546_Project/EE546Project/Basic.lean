@@ -754,9 +754,35 @@ For future work, we need to create our IntRingModM to become a CommRing with `Co
 #eval (-3 : ZMod 5)
 #eval (-3 : IntRingModM 5)
 
-set_option diagnostics.threshold 100
+theorem eq_with_parens {α : Type} (a b : α) : (a = b) ↔ ((a) = (b)) := by
+  -- The proof is trivial because parentheses don't change the meaning
+  apply Iff.intro
+  . intro h
+    exact h
+  . intro h
+    exact h
+
+-- Define the theorem
+set_option diagnostics.threshold 5000
+theorem fin_add_assoc {n : Nat} (ha hb hc : Fin (n + 1)) : ha + hb + hc = ha + (hb + hc) := by
+  apply Fin.ext
+  simp [Fin.add_def, Nat.add_assoc]
+
+set_option diagnostics.threshold 5000
 theorem IntRingModM.add_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a + b + c = a + (b + c) := by
-  sorry
+  match m with
+  | 0 =>
+    intro ha hb hc
+    unfold IntRingModM at ha hb hc
+    simp at ha hb hc
+    exact Int.add_assoc ha hb hc
+  | Nat.succ n =>
+    intro ha hb hc
+    unfold IntRingModM at ha hb hc
+    simp at ha hb hc
+    exact fin_add_assoc ha hb hc
+
+
 
 theorem IntRingModM.zero_add {m : ℕ} : ∀ (a : IntRingModM m), 0 + a = a := by
   sorry
