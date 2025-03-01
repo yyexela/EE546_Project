@@ -382,19 +382,46 @@ exact Int.dvd_mul_right d (k * x + j * y)
 
 theorem prop1_13_klavins_2 {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := by
 
-intro h
+  intro h
 
-have h' := Int.modEq_iff_add_fac.mp h
+  have h' := Int.modEq_iff_add_fac.mp h
 
-obtain ⟨ k, hk ⟩ := h'
+  obtain ⟨ k, hk ⟩ := h'
 
-have g1 : (gcd a m) ∣ a := by exact gcd_dvd_left a m
-have g2 : (gcd a m) ∣ m := by exact gcd_dvd_right a m
-have g3 : (gcd a m) ∣ a * b + m * k := by apply helperklavins g1 g2
+  have g1 : (gcd a m) ∣ a := by exact gcd_dvd_left a m
+  have g2 : (gcd a m) ∣ m := by exact gcd_dvd_right a m
+  have g3 : (gcd a m) ∣ a * b + m * k := by apply helperklavins g1 g2
 
-rw[←hk] at g3
+  rw[←hk] at g3
 
-sorry -- should be able to show g3 → gcd a m = 1
+  exact Int.eq_one_of_dvd_one (by exact Int.le.intro_sub (a.gcd m + 0) rfl) g3
+   -- should be able to show g3 → gcd a m = 1
+
+
+theorem intmod_mul_left_cancel {a b c d n: ℤ} (h1 : a ≡ b [ZMOD n]) (h2 : a*c ≡ b*d [ZMOD n]) :
+    c ≡ d [ZMOD n] :=
+  have : d - c = b + d - (a + c) - (b - a) := by omega
+  have : d / c = b*d / (a + c) / (b - a) := by omega
+  Int.modEq_iff_dvd.2 <| by
+    rw [this]
+    exact Int.dvd_sub h2.dvd h1.dvd
+
+theorem prop_1_13_b_better {a b1 b2 m : ℤ} : a * b1 ≡ 1 [ZMOD m] → a * b2 ≡ 1 [ZMOD m]
+→ b1 ≡ b2 [ZMOD m] := by
+  intro h1 h2
+  --have b11: b1*1 ≡ b1 [ZMOD m] := by simp
+  --have b12: b1*a*b2 ≡ b1*1 [ZMOD m] := by
+
+  have b11 : a*b1 ≡ a*b2 [ZMOD m] := by exact Int.ModEq.trans h1 (id (Int.ModEq.symm h2))
+  --rw[Int.mul_eq_mul_left_iff]
+  --simp[Int.ModEq.mul_left,Int.ModEq.dvd]
+  --rw[←Int.ModEq.mul_left] at b11
+  sorry
+  --apply Int.ModEq.mul_left at b11
+  --sorry
+  --
+  --have b1eq : b1 ≡ b1*(a*b2) [ZMOD m] := by rw[←Nat.mod_eq_of_lt] at h2
+
 
 -- Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 -- the (multiplicative) inverse of a modulo m.
