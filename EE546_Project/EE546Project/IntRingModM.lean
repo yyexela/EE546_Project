@@ -195,6 +195,7 @@ theorem IntRingModM.one_mul {m : ℕ} : ∀ (a : IntRingModM m), 1 * a = a := by
     simp
 
 -- Copied and modified from Mathlib: ZMod.Defs.lean
+-- Klavins help: What in the world is Fin.eq_of_val_eq doing
 -- This is a private theorem for some reason
 @[simp]
 theorem fin_left_distrib {n : ℕ} (a b c : Fin n) : a * (b + c) = a * b + a * c :=
