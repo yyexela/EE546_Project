@@ -56,12 +56,6 @@ def IntRingModM.neg {m : ℕ} (a : IntRingModM m) : IntRingModM m := match m wit
 instance {m : ℕ} : Neg (IntRingModM m) where
   neg a := IntRingModM.neg a
 
-
-/-
-OfNat.ofNat.{0} (Fin (OfNat.ofNat.{0} Nat 6 (instOfNatNat 6))) 2 (Fin.instOfNat (OfNat.ofNat.{0} Nat 6 (instOfNatNat 6)) (Nat.instNeZeroSucc (OfNat.ofNat.{0} Nat 5 (instOfNatNat 5))) 2)
-OfNat.ofNat.{0} (Fin (OfNat.ofNat.{0} Nat 6 (instOfNatNat 6))) 2 (Fin.instOfNat (OfNat.ofNat.{0} Nat 6 (instOfNatNat 6)) (Nat.instNeZeroSucc (OfNat.ofNat.{0} Nat 5 (instOfNatNat 5))) 2)
--/
-
 @[simp]
 instance {m : ℕ} : HAdd (IntRingModM m) (IntRingModM m) (IntRingModM m) where
   hAdd a b := IntRingModM.add a b
@@ -78,6 +72,7 @@ instance {m : ℕ} : HMul (IntRingModM m) (IntRingModM m) (IntRingModM m) where
 instance {m : ℕ} : Mul (IntRingModM m) where
   mul a b := IntRingModM.mul a b
 
+-- Throws error? Klavins : HELP! Why does uncommenting this break my code lower down?
 --instance {m : ℕ} : Neg (IntRingModM m) where
   --neg a := IntRingModM.neg a
 
@@ -94,6 +89,11 @@ theorem eq_with_parens {α : Type} (a b : α) : (a = b) ↔ ((a) = (b)) := by
 theorem fin_add_assoc {n : Nat} (ha hb hc : Fin (n + 1)) : ha + hb + hc = ha + (hb + hc) := by
   apply Fin.ext
   simp [Fin.add_def, Nat.add_assoc]
+
+@[simp]
+theorem fin_mul_assoc {n : Nat} (ha hb hc : Fin (n + 1)) : ha * hb * hc = ha * (hb * hc) := by
+  apply Fin.ext
+  simp [Fin.mul_def, Nat.mul_assoc]
 
 @[simp]
 theorem fin_zero_add {n : Nat} (ha : Fin (n + 1)) : 0 + ha = ha := by
@@ -115,6 +115,20 @@ theorem IntRingModM.add_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a + b + c
     exact fin_add_assoc ha hb hc
 
 @[simp]
+theorem IntRingModM.mul_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a * b * c = a * (b * c) := by
+  match m with
+  | 0 =>
+    intro ha hb hc
+    unfold IntRingModM at ha hb hc
+    simp at ha hb hc
+    exact Int.mul_assoc ha hb hc
+  | Nat.succ n =>
+    intro ha hb hc
+    unfold IntRingModM at ha hb hc
+    simp at ha hb hc
+    exact fin_mul_assoc ha hb hc
+
+@[simp]
 theorem IntRingModM.zero_add {m : ℕ} : ∀ (a : IntRingModM m), 0 + a = a := by
   match m with
   | 0 =>
@@ -132,28 +146,10 @@ theorem IntRingModM.zero_add {m : ℕ} : ∀ (a : IntRingModM m), 0 + a = a := b
 theorem neg_add_cancel' {a : ℤ} : -a + a = 0 := by
   exact Int.add_left_neg a
 
---example : ()
-
-def c1 : Fin 5 := 3
-def c2 : IntRingModM 5 := 3
-#eval c1
-#eval c2
-#eval -c1
-#eval -c2
-
---@[simp]
---theorem IntRingModM.ext {m : ℕ} {a b : IntRingModM m} (h : (a : ℕ) = b) : a = b := by
-  --match m with
-  --| 0 =>
-  --| Nat.succ n => sorry
-
 @[simp]
 theorem fin_neg_add_cancel {n : Nat} (ha : Fin (n + 1)) : -ha + ha = 0 := by
   apply Fin.ext
   simp [Fin.add_def]
-
-theorem intringmodm_eq_fin {m : ℕ} (hm : m > 0) : IntRingModM m = Fin m := by
-  sorry
 
 @[simp]
 theorem IntRingModM.neg_add_cancel {m : ℕ} : ∀ (a : IntRingModM m), -a + a = 0 := by
@@ -169,30 +165,67 @@ theorem IntRingModM.neg_add_cancel {m : ℕ} : ∀ (a : IntRingModM m), -a + a =
     have := fin_neg_add_cancel (ha:IntRingModM (n+1))
     simp
 
-/-
-type mismatch
-  this
-has type
-  @Neg.neg (Fin (n + 1)) (Fin.neg (n + 1)) ha + ha = 0 : Prop
-but is expected to have type
-  @Neg.neg (IntRingModM n.succ) instNegIntRingModM ha + ha = 0 : Prop
--/
-
-theorem IntRingModM.mul_assoc {m : ℕ} : ∀ (a b c : IntRingModM m), a * b * c = a * (b * c) := by
-  sorry
-
+@[simp]
 theorem IntRingModM.mul_comm {m : ℕ} : ∀ (a b : IntRingModM m), a * b = b * a := by
-  sorry
+  match m with
+  | 0 =>
+    intro ha hb
+    unfold IntRingModM at ha hb
+    simp at ha hb
+    exact Int.mul_comm ha hb
+  | Nat.succ n =>
+    intro ha hb
+    unfold IntRingModM at ha hb
+    simp at ha hb
+    have := Fin.mul_comm ha hb
+    exact this
 
+@[simp]
 theorem IntRingModM.one_mul {m : ℕ} : ∀ (a : IntRingModM m), 1 * a = a := by
-  sorry
+  match m with
+  | 0 =>
+    intro ha
+    unfold IntRingModM at ha
+    simp at ha
+    simp
+  | Nat.succ n =>
+    intro ha
+    unfold IntRingModM at ha
+    simp at ha
+    simp
+
+-- Copied and modified from Mathlib: ZMod.Defs.lean
+-- This is a private theorem for some reason
+@[simp]
+theorem fin_left_distrib {n : ℕ} (a b c : Fin n) : a * (b + c) = a * b + a * c :=
+  Fin.eq_of_val_eq (
+    calc
+      a * ((b + c) % n) ≡ a * (b + c) [MOD n] := (Nat.mod_modEq (b+c) n).mul_left a
+      _ ≡ a * b + a * c [MOD n] := by rw [mul_add]
+      _ ≡ a * b % n + a * c % n [MOD n] := (Nat.mod_modEq (a*b) n).symm.add (Nat.mod_modEq (a*c) n).symm
+  )
+
+-- Klavins : Help! Why does this work? Why can't I just use "left_distrib"?
+theorem int_left_distrib {a b c : ℤ} : a * (b + c) = a * b + a * c := left_distrib a b c
+
+--set_option pp.raw true
+--set_option pp.raw.maxDepth 10
 
 theorem IntRingModM.left_distrib {m : ℕ} : ∀ (a b c : IntRingModM m), a * (b + c) = a * b + a * c := by
-  sorry
+  match m with
+  | 0 =>
+    intro ha hb hc
+    unfold IntRingModM at ha hb hc
+    simp at ha hb hc
+    have := @int_left_distrib ha hb hc
+    exact this
+  | Nat.succ n =>
+    intro ha hb hc
+    unfold IntRingModM at ha hb hc
+    simp at ha hb hc
+    have := @fin_left_distrib (n+1) ha hb hc
+    exact this
 
-
---noncomputable
-set_option diagnostics true
 instance {m : ℕ} : CommRing (IntRingModM m) :=
   CommRing.ofMinimalAxioms
     IntRingModM.add_assoc
@@ -202,3 +235,9 @@ instance {m : ℕ} : CommRing (IntRingModM m) :=
     IntRingModM.mul_comm
     IntRingModM.one_mul
     IntRingModM.left_distrib
+
+example (R : Type) [CommRing R] (a b : R) : (a + b) * (a - b) = a^2 - b^2 := by
+  ring
+
+example {m : ℕ} (a b : IntRingModM m) : (a + b) * (a - b) = a^2 - b^2 := by
+  ring
