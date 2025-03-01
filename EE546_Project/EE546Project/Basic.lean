@@ -392,7 +392,7 @@ have g1 : (gcd a m) ∣ a := by exact gcd_dvd_left a m
 have g2 : (gcd a m) ∣ m := by exact gcd_dvd_right a m
 have g3 : (gcd a m) ∣ a * b + m * k := by apply helperklavins g1 g2
 
-rw[leftarr hk] at g3
+rw[←hk] at g3
 
 sorry -- should be able to show g3 → gcd a m = 1
 
@@ -493,6 +493,8 @@ Klavins feedback:
                       3^2^2 = 81 = (k^2)^2
                       3^2^3 = 6516 = ((k^2)^2)^2-/
 
+-- Ans: 489 mod 1000
+
 --  Step 1. Compute the binary expansion of A as
 --  A = A0 + A1×2 + A2×2^2 + A3×2^3 + ··· + A_r×(2^r) with A0,...,Ar ∈{0,1},
 --  where we may assume that Ar =1.
@@ -531,20 +533,69 @@ Ex of binary exp: 19 = 1(1) + 2(1) + 4(0) + 8(0) + 16(1)
 
 -/
 
-def nat_to_binary (n : ℕ) : List ℕ :=
-  if n = 0 then []
-  else nat_to_binary (n / 2) ++ [n % 2] /-++ means append-/
+/- Coefficients of binary expansion
+Note: Left to Right, due to algorithm
+E.g. 001 represents 4 -/
+def nat_to_binary (A : ℕ) : List ℕ :=
+  if A = 0 then []
+  else [A % 2] ++ nat_to_binary (A / 2) --++ means append
 
 #eval nat_to_binary 5
 #eval nat_to_binary 16
 #eval nat_to_binary 19
 
-def g_2_i (L : List ℕ) (r g i : ℕ): List ℕ :=
-  /-for intended algorithm, recursion needs to go from 0 to r, not downwards-/
-  sorry
+def g_2_i (g r N: Nat): List Nat :=
+-- for intended algorithm, recursion needs to go from 0 to r, not downwards
+-- look at: getlast, head, tail
+-- r = 2
+-- [3^2^0,3^2^1,3^2^2] n = 2
+-- [3^2^0,3^2^1] n = 1. takes return, concat the sq, return up
+-- [3^2^0] n = 0. returns this upwards
+  if r = 0 then [g^2^0 % N]
+  else
+  --else
+    let rest := g_2_i g (r-1) N
+    --if r = 1 then [g^2^1]
+    rest ++ [(rest.getLast!)^2 % N]
 
-def fast_pow_alg (g N: ℤ) (A : ℕ) (L: List ℕ): ℤ :=
-  sorry
+def helperlist (n : Nat) : List Nat :=
+  if n = 0 then [0]
+  else
+    let rest := helperlist (n - 1)
+    if n = 1 then [1]
+    else rest ++ [2*(rest.getLast!)]
+
+#eval helperlist (5^2)
+
+#eval g_2_i 3 0 1000
+/- $$ 3^2^0 mod 1000 $$ 2-/
+#eval g_2_i 3 1 1000  --3^2^0, 3^2^1 mod 1000
+#eval g_2_i 3 5 1000  --3^2^0, 3^2^1...3^2^4 mod 1000
+#eval g_2_i 3 5 11    --3^2^0, 3^2^1...3^2^4 mod 11
+
+-- Final mod not here, instead in alg
+def fast_pow_helper (bases : List ℕ) (exps : List ℕ) (N: ℕ): ℕ :=
+  match bases, exps with
+  | [], [] => 1
+  | firs :: res1, firs2 :: res2 => ((firs ^ firs2) % N) * fast_pow_helper res1 res2 N
+  | _, _ => 1 --seems like lean needs this?
+
+#eval fast_pow_helper [3,9,4] [1,0,1] 11 --(3^1)(9^0)(4^1)
+
+def fast_pow_alg (g A N: ℕ) : ℤ :=
+  let binexp := nat_to_binary A
+  let gs := g_2_i g (binexp.length-1) N
+  (fast_pow_helper gs binexp N) % N
+
+#eval fast_pow_alg 3 218 1000 --3^218 mod 1000
+#eval 3^218 % 1000
+
+#eval fast_pow_alg 3 218123 12345
+#eval 3^218123 % 12345
+
+#eval fast_pow_alg 7 234 3
+#eval 7^234 % 3
+
 
 
 

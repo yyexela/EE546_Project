@@ -5,7 +5,9 @@ import re
 # The resulting markdown file can be viewed with your favorite viewer, or convered to html with something 
 # like pandoc -o build/output.html build/input.md --toc --standalone --mathjax --markdown-headings=atx
 
-f = open(sys.argv[1], "r")
+f = open(sys.argv[1], "r", errors='ignore')
+#f = open(sys.argv[1], "r", encoding='utf-8', errors='ignore')
+#f = open(sys.argv[1], "r", encoding='utf-16be',errors='ignore')
 
 data = f.read()
 
@@ -15,7 +17,7 @@ comment = r'(?s:(/-.*?-/))'
 
 for str in re.split(comment, data)[1:]:
     if len(str) > 1 and str[0] == '/' and str[1] == '-':
-        markdown = str[2:len(str)-2]
+        markdown = str[2:len(str)-2].encode('utf-8').decode('utf-8')
         print(markdown)
     else:
         code = str.lstrip().rstrip()
