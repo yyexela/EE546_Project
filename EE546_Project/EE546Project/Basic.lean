@@ -310,10 +310,6 @@ theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
 /-gcd(a,m) divides a*b - c*m (any linear combination of a,m)-/
 theorem helper_1_13_b (a b c m: ℤ): (Int.gcd a m) ∣ (a*b - c*m) := by sorry
 
--- Proposition 1.13. Let m ≥ 1 be an integer.
--- (b) Let a be an integer. Then
--- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
-
 theorem eq_iff_modEq_nat (n : ℕ) {a b : ℕ} : (a : ZMod n) = b ↔ a ≡ b [MOD n] := by
   cases n
   · simp [Nat.ModEq, Int.natCast_inj, Nat.mod_zero]
@@ -343,7 +339,9 @@ theorem prop1_13_b_1 (a b: ℤ) (m: ℕ) (hm: m ≥ 1) : ((a * b: ZMod m) = 1) �
   #eval (1 : ZMod 1)
 
 -- This works
-
+-- Proposition 1.13. Let m ≥ 1 be an integer.
+-- (b) Let a be an integer. Then
+-- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
 theorem prop1_13_klavins {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → Int.gcd a m = 1 := by
 
   intro h
@@ -351,7 +349,7 @@ theorem prop1_13_klavins {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → Int.gcd a m = 1 :
 
   obtain ⟨ k, hk ⟩ := h
 
-  rw[leftarr Int.isCoprime_iff_gcd_eq_one]
+  rw[←Int.isCoprime_iff_gcd_eq_one]
 
   use b
   use k
@@ -364,21 +362,20 @@ theorem prop1_13_klavins {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → Int.gcd a m = 1 :
 
 theorem helperklavins {d a b : ℤ} : d∣a → d∣b → ∀ x y, d ∣ a*x + b*y := by
 
-intro ha hb x y
+  intro ha hb x y
 
-simp[Int.dvd_def] at ha hb
+  simp[Int.dvd_def] at ha hb
 
-obtain ⟨ k, hk ⟩ := ha
-obtain ⟨ j, hj ⟩ := hb
+  obtain ⟨ k, hk ⟩ := ha
+  obtain ⟨ j, hj ⟩ := hb
 
-rw[hk,hj]
+  rw[hk,hj]
 
-have : d * k * x + d * j * y = d*(k*x+j*y) := by ring
+  have : d * k * x + d * j * y = d*(k*x+j*y) := by ring
 
-rw[this]
+  rw[this]
 
-exact Int.dvd_mul_right d (k * x + j * y)
-
+  exact Int.dvd_mul_right d (k * x + j * y)
 
 theorem prop1_13_klavins_2 {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := by
 
@@ -397,105 +394,35 @@ theorem prop1_13_klavins_2 {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := 
   exact Int.eq_one_of_dvd_one (by exact Int.le.intro_sub (a.gcd m + 0) rfl) g3
    -- should be able to show g3 → gcd a m = 1
 
-
-theorem intmod_mul_left_cancel {a b c d n: ℤ} (h1 : a ≡ b [ZMOD n]) (h2 : a*c ≡ b*d [ZMOD n]) :
-    c ≡ d [ZMOD n] :=
-  have : d - c = b + d - (a + c) - (b - a) := by omega
-  have : d / c = b*d / (a + c) / (b - a) := by omega
-  Int.modEq_iff_dvd.2 <| by
-    rw [this]
-    exact Int.dvd_sub h2.dvd h1.dvd
-
-theorem prop_1_13_b_better {a b1 b2 m : ℤ} : a * b1 ≡ 1 [ZMOD m] → a * b2 ≡ 1 [ZMOD m]
-→ b1 ≡ b2 [ZMOD m] := by
-  intro h1 h2
-  --have b11: b1*1 ≡ b1 [ZMOD m] := by simp
-  --have b12: b1*a*b2 ≡ b1*1 [ZMOD m] := by
-
-  have b11 : a*b1 ≡ a*b2 [ZMOD m] := by exact Int.ModEq.trans h1 (id (Int.ModEq.symm h2))
-  --rw[Int.mul_eq_mul_left_iff]
-  --simp[Int.ModEq.mul_left,Int.ModEq.dvd]
-  --rw[←Int.ModEq.mul_left] at b11
-  sorry
-  --apply Int.ModEq.mul_left at b11
-  --sorry
-  --
-  --have b1eq : b1 ≡ b1*(a*b2) [ZMOD m] := by rw[←Nat.mod_eq_of_lt] at h2
-
+-- Proposition 1.13. Let m ≥ 1 be an integer.
+-- (b) Let a be an integer. Then
+-- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
+-- Reverse direction
+theorem prop_1_13b_reverse (a b m: ℤ) : Int.gcd a m = 1 → ∃ b: ℤ, a*b ≡ 1 [ZMOD m] := by
+  intro h
+  have eq1 : a.gcd m = a * (a.gcdA m) + m * (a.gcdB m) := by exact Int.gcd_eq_gcd_ab a m
+  have eq2 : 1 = a * (a.gcdA m) + m * (a.gcdB m) := by rw[h] at eq1; exact eq1 /-first, rewrites eq1 to equal 1, then uses exact-/
+  have eq3: m * -(a.gcdB m) = (a * (a.gcdA m) - 1) := by linarith
+  have eq4: m ∣ (a * (a.gcdA m) - 1) := by exact dvd_of_mul_right_eq (-(a.gcdB m)) eq3
+  have eq5: 1 ≡ a * (a.gcdA m) [ZMOD m] := by exact Int.modEq_iff_dvd.mpr eq4
+  let b := a.gcdA m
+  have eq6: a * (b) ≡ 1 [ZMOD m] := by exact id (Int.ModEq.symm eq5)
+  apply Exists.intro b
+  exact eq6
 
 -- Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 -- the (multiplicative) inverse of a modulo m.
-theorem prop1_13_b (a b1 b2 m: ℤ)
-  (h: m ≥ 1):
-  ((∃ b: ℤ, congru_mod (a*b) 1 m (by trivial)) ↔ Int.gcd a m = 1) ∧
-  ( ((congru_mod (a * b1) (1) m (by trivial)) ∧ (congru_mod (a * b2) (1) m (by trivial)))  → congru_mod (b1) (b2) m h) := by
-  apply And.intro
-  . apply Iff.intro
-    . intro ab_eq_1_mod
-      apply Exists.elim (ab_eq_1_mod)
-        (
-          by
-          intro b1 hb1
-          have m_div : m ∣ (a*b1 - 1) := hb1
-          --let c : ℤ := by assumption
-          rw[Int.dvd_def] at m_div
-          apply Exists.elim (m_div)
-          (
-            intro c1 ha1
-            have ha2: a*b1 - m*c1 = 1 := by linarith
-            --simp only[Int.gcd_dvd_left,Int.gcd_eq_gcd_ab,congru_mod]
-            --have gcd_div :  ∣ (a*b1 - m*c1) := by Int.dvd_sub (Int.gcd_dvd_left a m) (sorry)
-            --have eq1 : a*b1 - m*c1 = a.gcd m := by exact Int.gcd_eq_gcd_ab a m
-           -- have so : (Int.gcd a m) ∣ a*b1 := by sorry
-            have eq1 : Int.gcd a m = a * (a.gcdA m) + m * (a.gcdB m) := by exact Int.gcd_eq_gcd_ab a m
-
-            let c2 := a.gcdA m
-            let b2 := a.gcdB m
-
-            have eq2 : Int.gcd a m = a * c2+ m * b2 := by exact Int.gcd_eq_gcd_ab a m
-
-            sorry
-
-            -- a.gcdA m := b1
-            -- let (a.gcdB m) := c1
-            -- have eq2: Int.gcd a m = a * (b1) + m * (c1) := by exact eq1
-            -- rw[\la ha2] at eq2
-          )
-          --have c_times_m : m*c = (a*b1 - 1) := by rw[Int.dvd_def]
-        )
-      --simp
-    . intro gcd_eq_1
-      --let u : ℤ
-      --let m : ℤ
-      --apply Exists.intro b
-      --sorry
-      have eq1 : a.gcd m = a * (a.gcdA m) + m * (a.gcdB m) := by exact Int.gcd_eq_gcd_ab a m
-      have eq2 : 1 = a * (a.gcdA m) + m * (a.gcdB m) := by rw[gcd_eq_1] at eq1; exact eq1 /-first, rewrites eq1 to equal 1, then uses exact-/
-      have eq3: m * -(a.gcdB m) = (a * (a.gcdA m) - 1) := by linarith
-      have eq4: m ∣ (a * (a.gcdA m) - 1) := by exact dvd_of_mul_right_eq (-(a.gcdB m)) eq3
-      have eq5: congru_mod (a * (a.gcdA m)) 1 m (by trivial) := by exact eq4
-      let b := a.gcdA m
-      have eq6: congru_mod (a * (b)) 1 m (by trivial) := by exact eq5
-      apply Exists.intro b
-      exact eq6
-      --exact fffk
-      --sorry
-      --have ⟨ er,rt,yu ⟩ := Int.gcd_eq_gcd_ab a m
-      --match ⟨one, two⟩ with Int.gcd_eq_gcd_ab a m
-      --have (one, two, three) := theorem1_11 a b
-  . intro andstat
-    simp[congru_mod,dvd_of_mul_right_eq,Int.dvd_add,Int.dvd_sub]
-    have one : m ∣ a*b1 - 1 := by apply andstat.left
-    have two : m ∣ a*b2 - 1 := by apply andstat.right
-    have msub := (prop1_4_c one two).right
-    have subdiv : a*b1 - 1 - (a*b2 - 1) = a*(b1 - b2) := by linarith
-    rw[subdiv] at msub
-    sorry
-    --; rw[linarith]
-    -- intro s
-    -- simp[congru_mod,dvd_of_mul_right_eq,Int.dvd_add,Int.dvd_sub]
-    -- have ab1_eq_ab2 : 1 ∣ a*(b1 - b2) := by simp[congru_mod]
-    -- sorry
+theorem prop_1_13_b_part2 {a b1 b2 m : ℤ} : a * b1 ≡ 1 [ZMOD m] → a * b2 ≡ 1 [ZMOD m] → b1 ≡ b2 [ZMOD m] := by
+  intro h1 h2
+  have e1: b1*(a*b2) ≡ b1*1 [ZMOD m] := by exact Int.ModEq.mul (by trivial) (h2)
+  have e2 : b1*(a*b2) ≡ b1*a*b2 [ZMOD m] := by rw[mul_assoc]
+  have e3: (b1*a)*b2 ≡ b1*1 [ZMOD m] := by exact Int.ModEq.trans (id (Int.ModEq.symm e2)) e1
+  have e4: b1*a ≡ a*b1 [ZMOD m] := by rw[mul_comm]
+  have e5: b1*a ≡ 1 [ZMOD m] := by exact Int.ModEq.trans e4 h1
+  have e6: (b1*a)*b2 ≡ (1)*b2 [ZMOD m] := by refine Int.ModEq.mul (by exact e5) rfl
+  have e7: (1)*b2 ≡ b1*1 [ZMOD m] := by exact Int.ModEq.trans (id (Int.ModEq.symm e6)) e3
+  simp at e7
+  exact id (Int.ModEq.symm e7)
 
 /- next: integer rings, or skip and do primes
 Klavins feedback:
@@ -691,6 +618,6 @@ a = p_1^e_1 × p_2^e^2 ... p_r^e_r
 
 Further, other than rearranging the order of the primes, this factorization into prime powers is unique.
 -/
-theorem prop_1_20 (a : ℤ) (h: a ≥ 2) :
+theorem prop_1_20 (a : ℤ) (h: a ≥ 2) (p1 p2 : ℕ): a = p1*p2 := sorry
 
 /-Next: more primes, and using fields/groups/rings in proofs, make proofs shorter-/
