@@ -149,11 +149,11 @@ theorem prop1_13_a (a1 a2 b1 b2 m: ℤ)
     . exact dvd_mul_sub_mul h2 h3
 
 
--- This works
 -- Proposition 1.13. Let m ≥ 1 be an integer.
 -- (b) Let a be an integer. Then
 -- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
-theorem prop1_13_klavins {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → Int.gcd a m = 1 := by
+-- Credit: Prof. Eric Klavins
+theorem prop1_13_b_fwd {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → Int.gcd a m = 1 := by
 
   intro h
   apply Int.modEq_iff_add_fac.mp at h
@@ -168,8 +168,9 @@ theorem prop1_13_klavins {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → Int.gcd a m = 1 :
 
   ring
 
--- Here's a helper for for another version of the proof below
-theorem helperklavins {d a b : ℤ} : d∣a → d∣b → ∀ x y, d ∣ a*x + b*y := by
+-- Helper for another version of the prop1_13_b proof
+-- Credit: Prof. Eric Klavins
+theorem prop1_13_b_fwd_helper {d a b : ℤ} : d∣a → d∣b → ∀ x y, d ∣ a*x + b*y := by
 
   intro ha hb x y
 
@@ -186,7 +187,11 @@ theorem helperklavins {d a b : ℤ} : d∣a → d∣b → ∀ x y, d ∣ a*x + b
 
   exact Int.dvd_mul_right d (k * x + j * y)
 
-theorem prop1_13_klavins_2 {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := by
+-- (Alternate Proof) Proposition 1.13. Let m ≥ 1 be an integer.
+-- (b) Let a be an integer. Then
+-- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
+-- Credit: Prof. Eric Klavins
+theorem prop1_13_b_fwd_alt {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := by
 
   intro h
 
@@ -196,7 +201,7 @@ theorem prop1_13_klavins_2 {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := 
 
   have g1 : (gcd a m) ∣ a := by exact gcd_dvd_left a m
   have g2 : (gcd a m) ∣ m := by exact gcd_dvd_right a m
-  have g3 : (gcd a m) ∣ a * b + m * k := by apply helperklavins g1 g2
+  have g3 : (gcd a m) ∣ a * b + m * k := by apply prop1_13_b_fwd_helper g1 g2
 
   rw[←hk] at g3
 
@@ -210,7 +215,7 @@ theorem prop1_13_klavins_2 {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := 
 theorem prop_1_13b_reverse (a b m: ℤ) : Int.gcd a m = 1 → ∃ b: ℤ, a*b ≡ 1 [ZMOD m] := by
   intro h
   have eq1 : a.gcd m = a * (a.gcdA m) + m * (a.gcdB m) := by exact Int.gcd_eq_gcd_ab a m
-  have eq2 : 1 = a * (a.gcdA m) + m * (a.gcdB m) := by rw[h] at eq1; exact eq1 /-first, rewrites eq1 to equal 1, then uses exact-/
+  have eq2 : 1 = a * (a.gcdA m) + m * (a.gcdB m) := by rw[h] at eq1; exact eq1 --first, rewrites eq1 to equal 1, then uses exact
   have eq3: m * -(a.gcdB m) = (a * (a.gcdA m) - 1) := by linarith
   have eq4: m ∣ (a * (a.gcdA m) - 1) := by exact dvd_of_mul_right_eq (-(a.gcdB m)) eq3
   have eq5: 1 ≡ a * (a.gcdA m) [ZMOD m] := by exact Int.modEq_iff_dvd.mpr eq4
@@ -240,18 +245,11 @@ def nat_to_binary (A : ℕ) : List ℕ :=
   if A = 0 then []
   else [A % 2] ++ nat_to_binary (A / 2) --++ means append
 
+-- computes g^2^i for 0 ≤ i ≤ r
 def g_2_i (g r N: Nat): List Nat :=
--- for intended algorithm, recursion needs to go from 0 to r, not downwards
--- look at: getlast, head, tail
--- r = 2
--- [3^2^0,3^2^1,3^2^2] n = 2
--- [3^2^0,3^2^1] n = 1. takes return, concat the sq, return up
--- [3^2^0] n = 0. returns this upwards
   if r = 0 then [g^2^0 % N]
   else
-  --else
     let rest := g_2_i g (r-1) N
-    --if r = 1 then [g^2^1]
     rest ++ [(rest.getLast!)^2 % N]
 
 def helperlist (n : Nat) : List Nat :=
@@ -261,13 +259,14 @@ def helperlist (n : Nat) : List Nat :=
     if n = 1 then [1]
     else rest ++ [2*(rest.getLast!)]
 
--- Final mod not here, instead in alg
+-- Note: Final mod not here, instead in fast_pow_alg
 def fast_pow_helper (bases : List ℕ) (exps : List ℕ) (N: ℕ): ℕ :=
   match bases, exps with
   | [], [] => 1
   | firs :: res1, firs2 :: res2 => ((firs ^ firs2) % N) * fast_pow_helper res1 res2 N
   | _, _ => 1 --seems like lean needs this?
 
+-- Computes g^A mod N
 def fast_pow_alg (g A N: ℕ) : ℤ :=
   let binexp := nat_to_binary A
   let gs := g_2_i g (binexp.length-1) N
