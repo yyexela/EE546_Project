@@ -4,6 +4,7 @@ import Mathlib.Data.Int.Defs
 import Mathlib.Data.Nat.Defs
 import Mathlib.Algebra.Ring.MinimalAxioms
 
+-- TODO: Add comments for everything (Alexey)
 -- Emmy suggests: convert and change
 
 @[simp]
