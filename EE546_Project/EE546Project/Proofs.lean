@@ -238,9 +238,9 @@ theorem prop_1_13_b_part2 {a b1 b2 m : ℤ} : a * b1 ≡ 1 [ZMOD m] → a * b2 �
   simp at e7
   exact id (Int.ModEq.symm e7)
 
-/- Coefficients of binary expansion
-Note: Left to Right, due to algorithm
-E.g. 001 represents 4 -/
+-- Coefficients of binary expansion
+-- Note: Left to Right, due to algorithm
+-- E.g. 001 represents 4
 def nat_to_binary (A : ℕ) : List ℕ :=
   if A = 0 then []
   else [A % 2] ++ nat_to_binary (A / 2) --++ means append
