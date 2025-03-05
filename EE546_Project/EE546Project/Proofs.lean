@@ -119,9 +119,16 @@ def theorem1_11 (a b : Nat) : (Nat × Int × Int) :=
   let y := b
   theorem1_11_h a b u x y g
 
+-- GCD for integersv
+def gcd_int (a b : Int) :=
+  (theorem1_7 a.natAbs b.natAbs)
+
 -- Relatively Prime Definition
-def rel_prime (a b : Nat) :=
+def rel_prime_nat (a b : Nat) :=
   theorem1_7 a b = 1 -- theorem1_7: GCD
+
+def rel_prime_int (a b : Int) :=
+  gcd_int a b = 1
 
 -- Definition. Let m ≥ 1 be an integer. We say that the integers a and b are
 -- congruent modulo m if their difference a − b is divisible by m. We write
@@ -271,3 +278,16 @@ def fast_pow_alg (g A N: ℕ) : ℤ :=
   let binexp := nat_to_binary A
   let gs := g_2_i g (binexp.length-1) N
   (fast_pow_helper gs binexp N) % N
+
+theorem chinese_remainder_theorem (k: ℕ) (hk: k ≥ 1) (m : List ℤ) (a : List ℤ) (hm : m.length = k) (ha : a.length = k) :
+  -- The moduli and residues must have the same length
+  m.length = a.length →
+  -- The moduli must be pairwise coprime
+  (∀ i j (hi : i < k) (hj : j < k) (hij: i ≠ j), rel_prime_int (m.get ⟨i, by simp only[hi,hm]⟩) (m.get ⟨j, by simp only[hj,hm]⟩)) →
+  -- There exists a solution x that satisfies all the congruences
+  ∃ x : ℤ, ∀ i (hi : i < m.length), x ≡ a.get ⟨i, by linarith⟩ [ZMOD m.get ⟨i, hi⟩] :=
+sorry
+
+-- i < a.length
+
+-- (∀ i, ∀ j, (hi : i < k), (hj : j < k), (hij: i ≠ j) → rel_prime_int (m.get ⟨i, sorry⟩) (m.get ⟨j, sorry⟩)) →

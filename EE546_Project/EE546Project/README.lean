@@ -25,13 +25,12 @@
   - Chinese Remainder Theorem
 -/
 
-import Mathlib.Algebra.Divisibility.Basic
-import Mathlib.Tactic
-import Mathlib.Data.Int.Defs
-import Mathlib.Data.Nat.Defs
-import Mathlib.Algebra.Ring.MinimalAxioms
-open Classical
+import EE546Project.IntRingModM
+import EE546Project.Proofs
 
 /-
   Chapter 1: An Introduction to Cryptography
 -/
+
+#eval (5: IntRingModM 3)
+#check CommRing (IntRingModM 3)
