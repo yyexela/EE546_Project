@@ -20,7 +20,7 @@ Number theory is the "study of the properties of whole numbers" [[Wolfram Mathwo
 
 Number theory is important in modern cryptography due to certain functions/operations in number theory that are easy to compute in one direction, but hard to compute (break) in the other direction.
 
-Examples:
+Examples:<br />
 -Discrete logarithm: For a^n mod p, if you know a and a^n mod p, it is difficult to find n. So if n was the "password" (private key) needed to decrypt a message, only the people who know n will know the contents of the message.
 
 -Prime factorization: It's easy to compute the product of two primes, but factoring it back into primes is a difficult problem. So the primes can be used as the keys to encrypt a message.
@@ -153,8 +153,8 @@ Intuition for why this works:
 1. By definition, gcd(*a*,*b*), divides *a*, and divides *b*.<br />
 2. Also, gcd(*a*,*b*) divides the sum of *a* and *b*.<br />
 3. More generally, if gcd(*a*,*b*) divides a, then<br />
-we must be able to say a × u = gcd(*a*,*b*)<br />
-where m is some integer (same can be done for b).<br />
+we must be able to say *a* × *u* = gcd(*a*,*b*)<br />
+where *u* is some integer (same can be done for b).<br />
 4. Therefore gcd(*a*,*b*) divides a linear integer<br />
 combination of *a*,*b* i.e. *au* + *bv*.<br />
 
