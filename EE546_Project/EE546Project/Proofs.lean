@@ -35,7 +35,7 @@ theorem helper_lemma_2 {a b : ℤ} : 1 = a * b → (a = 1 ∧ b = 1) ∨ (a = -1
     simp_all
 
 -- (b) If a | b and b | a, then a = ±b.
-/-classical not needed, but makes things easier-/
+/- classical not needed, but makes things easier to read -/
 theorem prop1_4_b {a b : ℤ} : a ∣ b → b ∣ a → a = b ∨ a = -b := by
   apply Or.elim (Classical.em (a < 0))
   . apply Or.elim (Classical.em (b < 0))
@@ -119,14 +119,19 @@ def theorem1_11 (a b : Nat) : (Nat × Int × Int) :=
   let y := b
   theorem1_11_h a b u x y g
 
--- GCD for integersv
+-- GCD for integers
 def gcd_int (a b : Int) :=
-  (theorem1_7 a.natAbs b.natAbs)
+  theorem1_7 a.natAbs b.natAbs
 
--- Relatively Prime Definition
+-- Extended Euclid for integers
+def ee_int (a b : ℤ) : (Nat × Int × Int) :=
+  theorem1_11 a.natAbs b.natAbs
+
+-- Relatively Prime Definition for Natural Numbers
 def rel_prime_nat (a b : Nat) :=
   theorem1_7 a b = 1 -- theorem1_7: GCD
 
+-- Relatively Prime Definition for Integers
 def rel_prime_int (a b : Int) :=
   gcd_int a b = 1
 
@@ -219,7 +224,7 @@ theorem prop1_13_b_fwd_alt {a b m: ℤ} : a*b ≡ 1 [ZMOD m] → gcd a m = 1 := 
 -- (b) Let a be an integer. Then
 -- a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.
 -- Reverse direction
-theorem prop_1_13b_reverse (a b m: ℤ) : Int.gcd a m = 1 → ∃ b: ℤ, a*b ≡ 1 [ZMOD m] := by
+theorem prop_1_13b_reverse (a m: ℤ) : Int.gcd a m = 1 → ∃ b: ℤ, a*b ≡ 1 [ZMOD m] := by
   intro h
   have eq1 : a.gcd m = a * (a.gcdA m) + m * (a.gcdB m) := by exact Int.gcd_eq_gcd_ab a m
   have eq2 : 1 = a * (a.gcdA m) + m * (a.gcdB m) := by rw[h] at eq1; exact eq1 --first, rewrites eq1 to equal 1, then uses exact
@@ -259,13 +264,6 @@ def g_2_i (g r N: Nat): List Nat :=
     let rest := g_2_i g (r-1) N
     rest ++ [(rest.getLast!)^2 % N]
 
-def helperlist (n : Nat) : List Nat :=
-  if n = 0 then [0]
-  else
-    let rest := helperlist (n - 1)
-    if n = 1 then [1]
-    else rest ++ [2*(rest.getLast!)]
-
 -- Note: Final mod not here, instead in fast_pow_alg
 def fast_pow_helper (bases : List ℕ) (exps : List ℕ) (N: ℕ): ℕ :=
   match bases, exps with
@@ -279,15 +277,66 @@ def fast_pow_alg (g A N: ℕ) : ℤ :=
   let gs := g_2_i g (binexp.length-1) N
   (fast_pow_helper gs binexp N) % N
 
-theorem chinese_remainder_theorem (k: ℕ) (hk: k ≥ 1) (m : List ℤ) (a : List ℤ) (hm : m.length = k) (ha : a.length = k) :
-  -- The moduli and residues must have the same length
-  m.length = a.length →
+-- Algorithmic computation of Chinese Remainder Theorem
+-- Using Extended Euclid's Algorithm
+def crt_euclid_2 (a₁ a₂ n₁ n₂: ℤ) : ℤ := by
+  obtain ⟨_, m₁, m₂⟩ := ee_int n₁ n₂
+  let x := a₁ * m₂ * n₂ + a₂ * m₁ * n₁
+  exact x
+
+/-
+EVERYTHING BELOW THIS IS SCRATCH:
+
+Thoughts for Eric:
+- Have extended Euclidean Algorithm as a definition, but not as a proof, is it okay to use this as a proof?
+-/
+
+#eval crt_euclid_2 2 3 5 7
+
+-- Prove in case of two coprime
+-- Note: not actually possible with what we have since we just have computations/algorithms, but no theorems
+theorem crt_ee_proof {a₁ a₂ n₁ n₂: ℤ} (hrp: rel_prime_int n₁ n₂) : (crt_euclid_2 a₁ a₂ n₁ n₂) ≡ a₁ [ZMOD n₁] ∧ (crt_euclid_2 a₁ a₂ n₁ n₂) ≡ a₂ [ZMOD n₂] := by
+  apply And.intro
+  . let x := crt_euclid_2 a₁ a₂ n₁ n₂
+    rw[rel_prime_int,gcd_int,theorem1_7] at hrp
+    sorry
+  . sorry
+
+theorem crt_2_proof {a b : ℤ} {m n : ℕ } (hrf : Nat.Coprime m n) :  ∃ x, x ≡ a [ZMOD m] ∧ x ≡ b [ZMOD n] := by
+  obtain ⟨m', hm'⟩ := prop_1_13b_reverse m n hrf
+  let y : ℤ := m'*(b-a)
+  use a + m * y
+  apply And.intro
+  .
+    sorry
+  .
+    sorry
+
+example (k: ℕ) (m : List ℤ) (a : List ℤ) (hm : m.length = k) (ha : a.length = k) (hma : m.length = a.length) :
   -- The moduli must be pairwise coprime
-  (∀ i j (hi : i < k) (hj : j < k) (hij: i ≠ j), rel_prime_int (m.get ⟨i, by simp only[hi,hm]⟩) (m.get ⟨j, by simp only[hj,hm]⟩)) →
+  (∀ i j (hi : i < k) (hj : j < k) (hij: i ≠ j), rel_prime_int (m[i]) (m[j])) →
   -- There exists a solution x that satisfies all the congruences
-  ∃ x : ℤ, ∀ i (hi : i < m.length), x ≡ a.get ⟨i, by linarith⟩ [ZMOD m.get ⟨i, hi⟩] :=
-sorry
+  ∃ x : ℤ, ∀ i (hi : i < m.length), x ≡ a[i] [ZMOD m[i]] := by
+  intro hrel
+  induction' k with k ih
+  . use 0
+    intro i
+    intro hi2
+    have : i < 0 := by linarith
+    contradiction
+  . sorry
 
--- i < a.length
+def coprime_list (L: List (ℤ × ℤ)) := match L with
+  | List.nil => True
+  | x::L' => coprime_list L' ∧ ∀ y, L'.elem y → rel_prime_int x.2 y.2
 
--- (∀ i, ∀ j, (hi : i < k), (hj : j < k), (hij: i ≠ j) → rel_prime_int (m.get ⟨i, sorry⟩) (m.get ⟨j, sorry⟩)) →
+example (L : List (ℤ × ℤ)) (hcp : coprime_list L):
+  ∃ x : ℤ, ∀ y, L.elem y → x ≡ y.1 [ZMOD y.2] := by
+  match L with
+  | List.nil =>
+    simp
+  | x :: L' =>
+    dsimp[coprime_list] at hcp
+    obtain ⟨hcp', cp⟩ := hcp
+    -- solve for
+    sorry
