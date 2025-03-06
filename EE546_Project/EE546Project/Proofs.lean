@@ -303,14 +303,35 @@ theorem crt_ee_proof {a₁ a₂ n₁ n₂: ℤ} (hrp: rel_prime_int n₁ n₂) :
   . sorry
 
 theorem crt_2_proof {a b : ℤ} {m n : ℕ } (hrf : Nat.Coprime m n) :  ∃ x, x ≡ a [ZMOD m] ∧ x ≡ b [ZMOD n] := by
+  have : Nat.Coprime n m := by exact Nat.coprime_comm.mp hrf
+  obtain ⟨n', hn'⟩ := prop_1_13b_reverse n m this
   obtain ⟨m', hm'⟩ := prop_1_13b_reverse m n hrf
-  let y : ℤ := m'*(b-a)
-  use a + m * y
+  use (a*n'*n + b*m'*m)
   apply And.intro
-  .
-    sorry
-  .
-    sorry
+  . rw[Int.ModEq]
+    simp
+    rw[←Int.ModEq]
+
+    have almost := Int.ModEq.mul_left a hn'
+    rw[Int.ModEq] at hn'
+    have h1 : n' * ↑n = ↑n * n' := by exact Int.mul_comm n' ↑n
+    have h2 : a * (n' * ↑n) = a * n' * ↑n := by exact Eq.symm (Int.mul_assoc a n' ↑n)
+    have h3 : a * 1 = a := by exact Int.mul_one a
+    rw[←h1, h2, h3] at almost
+    exact almost
+  . rw[Int.ModEq]
+    have : a * n' * ↑n + b * m' * ↑m = b * m' * ↑m + a * n' * ↑n := by exact Int.add_comm (a * n' * ↑n) (b * m' * ↑m)
+    rw[this]
+    simp
+    rw[←Int.ModEq]
+
+    have almost := Int.ModEq.mul_left b hm'
+    rw[Int.ModEq] at hm'
+    have h1 : m' * ↑m = ↑m * m' := by exact Int.mul_comm m' ↑m
+    have h2 : b * (m' * ↑m) = b * m' * ↑m := by exact Eq.symm (Int.mul_assoc b m' ↑m)
+    have h3 : b * 1 = b := by exact Int.mul_one b
+    rw[←h1, h2, h3] at almost
+    exact almost
 
 example (k: ℕ) (m : List ℤ) (a : List ℤ) (hm : m.length = k) (ha : a.length = k) (hma : m.length = a.length) :
   -- The moduli must be pairwise coprime
@@ -332,11 +353,36 @@ def coprime_list (L: List (ℤ × ℤ)) := match L with
 
 example (L : List (ℤ × ℤ)) (hcp : coprime_list L):
   ∃ x : ℤ, ∀ y, L.elem y → x ≡ y.1 [ZMOD y.2] := by
-  match L with
+  induction L with
+  | nil =>
+    sorry
+  | cons a L' ih =>
+    rw[coprime_list] at hcp
+    obtain ⟨ x, hx ⟩ := ih hcp.1
+
+    sorry
+
+/-
   | List.nil =>
     simp
-  | x :: L' =>
+  | (new_tup :: L') ih =>
     dsimp[coprime_list] at hcp
     obtain ⟨hcp', cp⟩ := hcp
-    -- solve for
+    let m1 =
     sorry
+-/
+
+example (L : List (ℤ × ℤ)) (hcp : coprime_list L):
+  ∃ x : ℤ, ∀ y, L.elem y → x ≡ y.1 [ZMOD y.2] := by
+  -- The moduli must be pairwise coprime
+  (∀ i j (hi : i < k) (hj : j < k) (hij: i ≠ j), rel_prime_int (m[i]) (m[j])) →
+  -- There exists a solution x that satisfies all the congruences
+  ∃ x : ℤ, ∀ i (hi : i < m.length), x ≡ a[i] [ZMOD m[i]] := by
+  intro hrel
+  induction' k with k ih
+  . use 0
+    intro i
+    intro hi2
+    have : i < 0 := by linarith
+    contradiction
+  . sorry
