@@ -14,6 +14,19 @@ Department of Electrical and Computer Engineering<br />
 Winter 2025
 <br />
 
+## Introduction
+
+Number theory is the "study of the properties of whole numbers" [[Wolfram Mathworld]](https://mathworld.wolfram.com/NumberTheory.html) (sometimes defined for integers). Cryptography is the "methodology of concealing the content of messages" (Chapter 1).
+
+Number theory is important in modern cryptography due to certain functions/operations in number theory that are easy to compute in one direction, but hard to compute (break) in the other direction.
+
+Examples:
+-Discrete logarithm: For a^n mod p, if you know a and a^n mod p, it is difficult to find n. So if n was the "password" (private key) needed to decrypt a message, only the people who know n will know the contents of the message.
+
+-Prime factorization: It's easy to compute the product of two primes, but factoring it back into primes is a difficult problem. So the primes can be used as the keys to encrypt a message.
+
+Cryptography is extremely relevant to the future. One reason is that, at some point, quantum computers will likely break commonly used number theory functions (public key cryptography). Fields such as post-quantum cryptography aim to develop systems resistant against this.
+
 ## Overview
 
 Primary contributions:<br />
@@ -247,6 +260,20 @@ Let *a*, *b*, *c* ∈ *ℤ* be integers.<br />
 (a) If *a* | *b* and *b* | *c*, then *a* | *c*.<br />
 (b) If *a* | *b* and *b* | *a*, then *a* = ±*b*.<br />
 (c) If *a* | *b* and *a* | *c*, then *a* | (*b* + *c*) and *a* | (*b* − *c*).<br />
+
+**Proposition 1.13**<br />
+Let m ≥ 1 be an integer.<br />
+(a) If a1 ≡ a2 (mod m) and b1 ≡ b2 (mod m), then<br />
+a1 ± b1 ≡ a2 ± b2 (mod m) and a1 · b1 ≡ a2 · b2 (mod m).<br />
+(b) Let a be an integer. Then<br />
+a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.<br />
+Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b<br />
+the (multiplicative) inverse of a modulo m.<br />
+
+**Fast Powering Algorithm**<br />
+g^A mod N can be computed efficiently by $ a_0^{A_0} a_1^{A_1} ... a_r^{A_r} mod N$
+where $A_0$, $A_1$...$A_r$ are the coefficients of the binary expansion of A,
+and $a_0 = g$, $a_1 = a_0^2$, $a_2 = a_1^2$ ... $a_r = g^2^r$
 
 ## Conclusion
 
