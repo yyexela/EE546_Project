@@ -1,6 +1,6 @@
 
 
-## EE 547 Final Project: Mathematical Cryptography
+## EE 546 Final Project: Mathematical Cryptography
 
 Textbook: <br />
 *An Introduction to Mathematical Cryptography (Second Edition)* <br />
@@ -13,6 +13,19 @@ University of Washington<br />
 Department of Electrical and Computer Engineering<br />
 Winter 2025
 <br />
+
+## Introduction
+
+Number theory is the "study of the properties of whole numbers" [[Wolfram Mathworld]](https://mathworld.wolfram.com/NumberTheory.html) (sometimes defined for integers). Cryptography is the "methodology of concealing the content of messages" (Chapter 1).
+
+Number theory is important in modern cryptography due to certain functions/operations in number theory that are easy to compute in one direction, but hard to compute (break) in the other direction.
+
+Examples:
+-Discrete logarithm: For a^n mod p, if you know a and a^n mod p, it is difficult to find n. So if n was the "password" (private key) needed to decrypt a message, only the people who know n will know the contents of the message.
+
+-Prime factorization: It's easy to compute the product of two primes, but factoring it back into primes is a difficult problem. So the primes can be used as the keys to encrypt a message.
+
+Cryptography is extremely relevant to the future. One reason is that, at some point, quantum computers will likely break commonly used number theory functions (public key cryptography). Fields such as post-quantum cryptography aim to develop systems resistant against this.
 
 ## Overview
 
@@ -134,6 +147,15 @@ integers. Then the equation<br />
 *au* + *bv* = gcd(*a*, *b*)<br />
 always has a solution in integers *u* and *v*.
 
+Intuition for why this works:
+1. By definition, gcd(*a*,*b*), divides *a*, and divides *b*.<br />
+2. Also, gcd(*a*,*b*) divides the sum of *a* and *b*.<br />
+3. More generally, if gcd(*a*,*b*) divides a, then<br />
+we must be able to say a × u = gcd(*a*,*b*)<br />
+where m is some integer (same can be done for b).<br />
+4. Therefore gcd(*a*,*b*) divides a linear integer<br />
+combination of *a*,*b* i.e. *au* + *bv*.<br />
+
 *Algorithm*:<br />
 ```text
 1. Set u = 1, g = a, x = 0, and y = b
@@ -236,11 +258,25 @@ Let *a*, *b*, *c* ∈ *ℤ* be integers.<br />
 (b) If *a* | *b* and *b* | *a*, then *a* = ±*b*.<br />
 (c) If *a* | *b* and *a* | *c*, then *a* | (*b* + *c*) and *a* | (*b* − *c*).<br />
 
+**Proposition 1.13**<br />
+Let m ≥ 1 be an integer.<br />
+(a) If a1 ≡ a2 (mod m) and b1 ≡ b2 (mod m), then<br />
+a1 ± b1 ≡ a2 ± b2 (mod m) and a1 · b1 ≡ a2 · b2 (mod m).<br />
+(b) Let a be an integer. Then<br />
+a · b ≡ 1 (mod m) for some integer b if and only if gcd(a, m)=1.<br />
+Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b<br />
+the (multiplicative) inverse of a modulo m.<br />
+
+**Fast Powering Algorithm**<br />
+g^A mod N can be computed efficiently by $ a_0^{A_0} a_1^{A_1} ... a_r^{A_r} mod N$
+where $A_0$, $A_1$...$A_r$ are the coefficients of the binary expansion of A,
+and $a_0 = g$, $a_1 = a_0^2$, $a_2 = a_1^2$ ... $a_r = g^2^r$
+
 ## Conclusion
 
 Our goal was to get through the Chinese Remainder Theorem by building up to it in the book. We were able to prove the key theorems leading up to it, but were unable to apply the proof in the book directly. Despite this, we were able to prove a plethora of interesting results in number theory and learned a lot about how to use Lean to prove algorithms as well as theorems. We learned a lot about the principles and underlying mathematics surrounding modular arithmetic and number theory.
 
-From this we learned that Mathlib is quite extensive and is useful when framing a problem around the existing theorems and definitions. However, if you start trying to prove something that is structured entirely differently than what is already in Mathlib, it becomes pretty useless.
+From this we learned that Mathlib is quite extensive and is useful when framing a problem around the existing theorems and definitions. However, if you start trying to prove something that is structured entirely differently than what is already in Mathlib, it becomes pretty useless.  It also makes it challenging to simplify these differently-structured proofs to the length of 2-3 lines commonly seen in Mathlib.
 
 Fortunately, number theory is already pretty well implemented, with the primary theorems already formalized. However, these proofs are not easy to understand and often use some pretty advanced mathematical structures to achieve them. For instance, the Chinese Remainder Theorem uses Ideals to prove the theorem for several types of rings. (see *Ideal.quotientInfRingEquivPiQuotient*)
 
