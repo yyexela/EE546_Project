@@ -353,11 +353,36 @@ def coprime_list (L: List (ℤ × ℤ)) := match L with
 
 example (L : List (ℤ × ℤ)) (hcp : coprime_list L):
   ∃ x : ℤ, ∀ y, L.elem y → x ≡ y.1 [ZMOD y.2] := by
-  match L with
+  induction L with
+  | nil =>
+    sorry
+  | cons a L' ih =>
+    rw[coprime_list] at hcp
+    obtain ⟨ x, hx ⟩ := ih hcp.1
+
+    sorry
+
+/-
   | List.nil =>
     simp
-  | x :: L' =>
+  | (new_tup :: L') ih =>
     dsimp[coprime_list] at hcp
     obtain ⟨hcp', cp⟩ := hcp
-    -- solve for
+    let m1 =
     sorry
+-/
+
+example (L : List (ℤ × ℤ)) (hcp : coprime_list L):
+  ∃ x : ℤ, ∀ y, L.elem y → x ≡ y.1 [ZMOD y.2] := by
+  -- The moduli must be pairwise coprime
+  (∀ i j (hi : i < k) (hj : j < k) (hij: i ≠ j), rel_prime_int (m[i]) (m[j])) →
+  -- There exists a solution x that satisfies all the congruences
+  ∃ x : ℤ, ∀ i (hi : i < m.length), x ≡ a[i] [ZMOD m[i]] := by
+  intro hrel
+  induction' k with k ih
+  . use 0
+    intro i
+    intro hi2
+    have : i < 0 := by linarith
+    contradiction
+  . sorry
