@@ -1,6 +1,6 @@
 /-
 
-## EE 547 Final Project: Mathematical Cryptography
+## EE 546 Final Project: Mathematical Cryptography
 
 Textbook: <br />
 *An Introduction to Mathematical Cryptography (Second Edition)* <br />
@@ -136,6 +136,15 @@ integers. Then the equation<br />
 *au* + *bv* = gcd(*a*, *b*)<br />
 always has a solution in integers *u* and *v*.
 
+Intuition for why this works:
+1. By definition, gcd(*a*,*b*), divides *a*, and divides *b*.<br />
+2. Also, gcd(*a*,*b*) divides the sum of *a* and *b*.<br />
+3. More generally, if gcd(*a*,*b*) divides a, then<br />
+we must be able to say a × u = gcd(*a*,*b*)<br />
+where m is some integer (same can be done for b).<br />
+4. Therefore gcd(*a*,*b*) divides a linear integer<br />
+combination of *a*,*b* i.e. *au* + *bv*.<br />
+
 *Algorithm*:<br />
 ```text
 1. Set u = 1, g = a, x = 0, and y = b
@@ -243,7 +252,7 @@ Let *a*, *b*, *c* ∈ *ℤ* be integers.<br />
 
 Our goal was to get through the Chinese Remainder Theorem by building up to it in the book. We were able to prove the key theorems leading up to it, but were unable to apply the proof in the book directly. Despite this, we were able to prove a plethora of interesting results in number theory and learned a lot about how to use Lean to prove algorithms as well as theorems. We learned a lot about the principles and underlying mathematics surrounding modular arithmetic and number theory.
 
-From this we learned that Mathlib is quite extensive and is useful when framing a problem around the existing theorems and definitions. However, if you start trying to prove something that is structured entirely differently than what is already in Mathlib, it becomes pretty useless.
+From this we learned that Mathlib is quite extensive and is useful when framing a problem around the existing theorems and definitions. However, if you start trying to prove something that is structured entirely differently than what is already in Mathlib, it becomes pretty useless.  It also makes it challenging to simplify these differently-structured proofs to the length of 2-3 lines commonly seen in Mathlib.
 
 Fortunately, number theory is already pretty well implemented, with the primary theorems already formalized. However, these proofs are not easy to understand and often use some pretty advanced mathematical structures to achieve them. For instance, the Chinese Remainder Theorem uses Ideals to prove the theorem for several types of rings. (see *Ideal.quotientInfRingEquivPiQuotient*)
 
