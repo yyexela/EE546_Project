@@ -303,14 +303,35 @@ theorem crt_ee_proof {a₁ a₂ n₁ n₂: ℤ} (hrp: rel_prime_int n₁ n₂) :
   . sorry
 
 theorem crt_2_proof {a b : ℤ} {m n : ℕ } (hrf : Nat.Coprime m n) :  ∃ x, x ≡ a [ZMOD m] ∧ x ≡ b [ZMOD n] := by
+  have : Nat.Coprime n m := by exact Nat.coprime_comm.mp hrf
+  obtain ⟨n', hn'⟩ := prop_1_13b_reverse n m this
   obtain ⟨m', hm'⟩ := prop_1_13b_reverse m n hrf
-  let y : ℤ := m'*(b-a)
-  use a + m * y
+  use (a*n'*n + b*m'*m)
   apply And.intro
-  .
-    sorry
-  .
-    sorry
+  . rw[Int.ModEq]
+    simp
+    rw[←Int.ModEq]
+
+    have almost := Int.ModEq.mul_left a hn'
+    rw[Int.ModEq] at hn'
+    have h1 : n' * ↑n = ↑n * n' := by exact Int.mul_comm n' ↑n
+    have h2 : a * (n' * ↑n) = a * n' * ↑n := by exact Eq.symm (Int.mul_assoc a n' ↑n)
+    have h3 : a * 1 = a := by exact Int.mul_one a
+    rw[←h1, h2, h3] at almost
+    exact almost
+  . rw[Int.ModEq]
+    have : a * n' * ↑n + b * m' * ↑m = b * m' * ↑m + a * n' * ↑n := by exact Int.add_comm (a * n' * ↑n) (b * m' * ↑m)
+    rw[this]
+    simp
+    rw[←Int.ModEq]
+
+    have almost := Int.ModEq.mul_left b hm'
+    rw[Int.ModEq] at hm'
+    have h1 : m' * ↑m = ↑m * m' := by exact Int.mul_comm m' ↑m
+    have h2 : b * (m' * ↑m) = b * m' * ↑m := by exact Eq.symm (Int.mul_assoc b m' ↑m)
+    have h3 : b * 1 = b := by exact Int.mul_one b
+    rw[←h1, h2, h3] at almost
+    exact almost
 
 example (k: ℕ) (m : List ℤ) (a : List ℤ) (hm : m.length = k) (ha : a.length = k) (hma : m.length = a.length) :
   -- The moduli must be pairwise coprime
