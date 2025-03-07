@@ -271,9 +271,9 @@ Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 the (multiplicative) inverse of a modulo m.<br />
 
 **Fast Powering Algorithm**<br />
-g^A mod N can be computed efficiently by $ a_0^{A_0} a_1^{A_1} ... a_r^{A_r} mod N$
-where $A_0$, $A_1$...$A_r$ are the coefficients of the binary expansion of A,
-and $a_0 = g$, $a_1 = a_0^2$, $a_2 = a_1^2$ ... $a_r = g^2^r$
+g^A mod N can be computed efficiently by $ {a_0}^{A_0} {a_1}^{A_1} ... {a_r}^{A_r} mod N$
+where $A_0$, $A_1$...${A_r}$ are the coefficients of the binary expansion of A,
+and $a_0 = g$, $a_1 = a_0^2$, $a_2 = a_1^2$ ... $a_r = g^{2^{r}}$
 
 ## Conclusion
 
