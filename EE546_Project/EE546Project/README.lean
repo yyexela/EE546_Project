@@ -283,5 +283,5 @@ From this we learned that Mathlib is quite extensive and is useful when framing 
 
 Fortunately, number theory is already pretty well implemented, with the primary theorems already formalized. However, these proofs are not easy to understand and often use some pretty advanced mathematical structures to achieve them. For instance, the Chinese Remainder Theorem uses Ideals to prove the theorem for several types of rings. (see *Ideal.quotientInfRingEquivPiQuotient*)
 
-What's left to do is formalize the Chinese Remainder theorem using Proposition 1.13 just as how the book describes it.
+Despite this, we were able to implement the Chinese Remainder theorem for the two-congruence case using Proposition 1.13, just as how the book describes it.
 -/
