@@ -108,11 +108,11 @@ A *common divisor* of two integers *a* and *b* is a positive integer *d* that di
 
 **Theorem 1.7** (The Euclidean Algorithm)<br />
 Let *a* and *b* be positive integers with *a* ≥ *b*. The following algorithm computes gcd(*a*, *b*) in a finite number of steps.<br />
-(1) Let *r0* = *a* and *r1* = *b*.<br />
+(1) Let *r₀* = *a* and *r₁* = *b*.<br />
 (2) Set *i* = 1.<br />
-(3) Divide *ri*−1 by *ri* to get a quotient qi and remainder *ri*+1, *ri*−1 = *ri* · qi + *ri*+1 with 0 ≤ *ri*+1 < *ri*.<br />
-(4) If the remainder *ri*+1 = 0, then *ri* = gcd(*a*, *b*) and the algorithm terminates.<br />
-(5) Otherwise, *ri*+1 > 0, so set *i* = *i* + 1 and go to Step 3.<br />
+(3) Divide *rᵢ*−1 by *rᵢ* to get a quotient qᵢ and remainder *rᵢ*+1, *rᵢ*−1 = *rᵢ* · qi + *rᵢ*+1 with 0 ≤ *rᵢ*+1 < *rᵢ*.<br />
+(4) If the remainder *rᵢ*+1 = 0, then *rᵢ* = gcd(*a*, *b*) and the algorithm terminates.<br />
+(5) Otherwise, *rᵢ*+1 > 0, so set *i* = *i* + 1 and go to Step 3.<br />
 
 *Proof:*<br />
 To prove this in Lean4 we just have to define a recursive function. In order to do so, we need to convince Lean that the function eventually terminates. We do this by using the `termination_by` and `decreasing_by` statements, supplying a proof of that the variable supplied in `termination_by` decreases with each iteration.
@@ -233,7 +233,7 @@ Let *a* and *b* be integers. We say that *a* and *b* are relatively prime if gcd
 Let *m₁*, *m₂*, . . . , *mₖ* be a collection of pairwise relatively prime integers. This means that gcd(*mᵢ*, *mⱼ* ) = 1 for all *i* ≠ *j*. Let *a₁*, *a2*, . . . , *ak* be arbitrary integers. Then the system of simultaneous congruences *x* ≡ *a₁* (mod *m₁*), *x* ≡ *a₂* (mod *m₂*), . . . , *x* ≡ *aₖ* (mod *mₖ*) has a solution *x* = *c*. Further, if *x* = *c* and *x* = *c′* are both solutions, then *c* ≡ *c′* (mod *m₁m₂* · · · *mₖ*).
 
 *Proof:*<br />
-There are many ways to prove this. The textbook uses Proposition 1.13, but we were unable to use that to prove this. Instead, we used the Extended Euclidean algorithm for the case of *k=2* for a computational proof. In effect, we define the Chinese Remainder Theorem as an algorithm and compute it. Since it compiles in Lean4 without an error, we have a complete proof.
+There are many ways to prove this. The textbook uses Proposition 1.13, which we were able to use to prove the theorem for two congruences. For an alternate proof, we used the Extended Euclidean algorithm for the case of *k=2* for a computational proof. In effect, we define the Chinese Remainder Theorem as an algorithm and compute it. Since it compiles in Lean4 without an error, we have a complete proof.
 -/
 
 namespace Temp
@@ -277,11 +277,15 @@ and $a_0 = g$, $a_1 = a_0^2$, $a_2 = a_1^2$ ... $a_r = g^{2^{r}}$
 
 ## Conclusion
 
-Our goal was to get through the Chinese Remainder Theorem by building up to it in the book. We were able to prove the key theorems leading up to it, but were unable to apply the proof in the book directly. Despite this, we were able to prove a plethora of interesting results in number theory and learned a lot about how to use Lean to prove algorithms as well as theorems. We learned a lot about the principles and underlying mathematics surrounding modular arithmetic and number theory.
+Our ideal goal would have been to implement and prove certain guarantees about a cryptosystem such as RSA. This goal was scaled down to get through the Chinese Remainder Theorem (CRT) by building up to it in the book. We were able to prove the key theorems leading up to it, and were able to apply the proof in the book directly. In addition, we were able to prove a plethora of interesting results in number theory and learned a lot about how to use Lean to prove algorithms as well as theorems. We learned a lot about the principles and underlying mathematics surrounding modular arithmetic and number theory.
 
-From this we learned that Mathlib is quite extensive and is useful when framing a problem around the existing theorems and definitions. However, if you start trying to prove something that is structured entirely differently than what is already in Mathlib, it becomes pretty useless.  It also makes it challenging to simplify these differently-structured proofs to the length of 2-3 lines commonly seen in Mathlib.
+From this we learned that Mathlib is quite extensive and is useful when framing a problem around the existing theorems and definitions. However, if you start trying to prove something that is structured entirely differently than what is already in Mathlib, it becomes pretty useless. It also makes it challenging to simplify these differently-structured proofs to the length of 2-3 lines commonly seen in Mathlib. Furthermore, we note that Mathlib was designed for mathematicians who work in the language and structure of formal math, which is less popular in engineering and computing fields.
 
-Fortunately, number theory is already pretty well implemented, with the primary theorems already formalized. However, these proofs are not easy to understand and often use some pretty advanced mathematical structures to achieve them. For instance, the Chinese Remainder Theorem uses Ideals to prove the theorem for several types of rings. (see *Ideal.quotientInfRingEquivPiQuotient*)
+Fortunately, number theory is already pretty well implemented, with the primary theorems already formalized. Indeed, for some of our proofs we found it easier to use Mathlib's built-in ZMOD rather than defining it ourselves. However, Lean's internal proofs are not easy to understand and often use some pretty advanced mathematical structures to achieve them. For instance, the CRT uses Ideals to prove the theorem for several types of rings. (see *Ideal.quotientInfRingEquivPiQuotient*)
 
-Despite this, we were able to implement the Chinese Remainder theorem for the two-congruence case using Proposition 1.13, just as how the book describes it.
+Despite this, we were able to implement the CRT for the two-congruence case using Proposition 1.13, just as how the book describes it.
+
+If we were to continue this project, the CRT could directly be used in proving RSA correctness (i.e. a message can be recovered after encrypting, decrypting). It could also be used in proving optimizations for other cryptosystems.
+
+Finally, special thanks to Professor Eric Klavins for teaching this course and introducing us to the world of Lean and proof assistants.
 -/

@@ -302,6 +302,7 @@ theorem crt_ee_proof {a₁ a₂ n₁ n₂: ℤ} (hrp: rel_prime_int n₁ n₂) :
     sorry
   . sorry
 
+-- Proof of Chinese Remainder Theorem for two-congruence case
 theorem crt_2_proof {a b : ℤ} {m n : ℕ } (hrf : Nat.Coprime m n) :  ∃ x, x ≡ a [ZMOD m] ∧ x ≡ b [ZMOD n] := by
   have : Nat.Coprime n m := by exact Nat.coprime_comm.mp hrf
   obtain ⟨n', hn'⟩ := prop_1_13b_reverse n m this
@@ -355,6 +356,7 @@ example (L : List (ℤ × ℤ)) (hcp : coprime_list L):
   ∃ x : ℤ, ∀ y, L.elem y → x ≡ y.1 [ZMOD y.2] := by
   induction L with
   | nil =>
+    intro h
     sorry
   | cons a L' ih =>
     rw[coprime_list] at hcp
