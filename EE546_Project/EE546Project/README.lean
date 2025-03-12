@@ -249,8 +249,12 @@ end Temp
 #eval crt_euclid_2 2 3 5 7 -- returns 17
 
 /-
-
+To prove that the algorithm converges to the right solution we need to define a theorem. We were able to do so for the base case of two equations.
 -/
+
+-- Proof of Chinese Remainder Theorem for two-congruence case
+theorem crt_2_proof {a b : ℤ} {m n : ℕ } (hrf : Nat.Coprime m n) :  ∃ x, x ≡ a [ZMOD m] ∧ x ≡ b [ZMOD n] := by
+  sorry -- proof in Proofs.lean
 
 /-
 ## Miscellaneous Proofs
@@ -271,9 +275,9 @@ Further, if a · b1 ≡ a · b2 ≡ 1 (mod m), then b1 ≡ b2 (mod m). We call b
 the (multiplicative) inverse of a modulo m.<br />
 
 **Fast Powering Algorithm**<br />
-g^A mod N can be computed efficiently by $ {a_0}^{A_0} {a_1}^{A_1} ... {a_r}^{A_r} mod N$
-where $A_0$, $A_1$...${A_r}$ are the coefficients of the binary expansion of A,
-and $a_0 = g$, $a_1 = a_0^2$, $a_2 = a_1^2$ ... $a_r = g^{2^{r}}$
+g<sup>A</sup> (mod N) can be computed efficiently by a<sub>0</sub><sup>A<sub>0</sub></sup> a<sub>1</sub><sup>A<sub>1</sub></sup> ... a<sub>r</sub><sup>A<sub>r</sub></sup> (mod N)
+where A<sub>0</sub>, A<sub>1</sub> ... A<sub>r</sub> are the coefficients of the binary expansion of A,
+and a<sub>0</sub> = g, a<sub>1</sub> = a<sub>0</sub><sup>2</sup>, a<sub>2</sub> = a<sub>1</sub><sup>2</sup> ... a<sub>r</sub> = g<sup>2<sup>r</sup></sup>
 
 ## Conclusion
 

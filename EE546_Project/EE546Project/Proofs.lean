@@ -284,24 +284,6 @@ def crt_euclid_2 (a₁ a₂ n₁ n₂: ℤ) : ℤ := by
   let x := a₁ * m₂ * n₂ + a₂ * m₁ * n₁
   exact x
 
-/-
-EVERYTHING BELOW THIS IS SCRATCH:
-
-Thoughts for Eric:
-- Have extended Euclidean Algorithm as a definition, but not as a proof, is it okay to use this as a proof?
--/
-
-#eval crt_euclid_2 2 3 5 7
-
--- Prove in case of two coprime
--- Note: not actually possible with what we have since we just have computations/algorithms, but no theorems
-theorem crt_ee_proof {a₁ a₂ n₁ n₂: ℤ} (hrp: rel_prime_int n₁ n₂) : (crt_euclid_2 a₁ a₂ n₁ n₂) ≡ a₁ [ZMOD n₁] ∧ (crt_euclid_2 a₁ a₂ n₁ n₂) ≡ a₂ [ZMOD n₂] := by
-  apply And.intro
-  . let x := crt_euclid_2 a₁ a₂ n₁ n₂
-    rw[rel_prime_int,gcd_int,theorem1_7] at hrp
-    sorry
-  . sorry
-
 -- Proof of Chinese Remainder Theorem for two-congruence case
 theorem crt_2_proof {a b : ℤ} {m n : ℕ } (hrf : Nat.Coprime m n) :  ∃ x, x ≡ a [ZMOD m] ∧ x ≡ b [ZMOD n] := by
   have : Nat.Coprime n m := by exact Nat.coprime_comm.mp hrf
@@ -333,6 +315,21 @@ theorem crt_2_proof {a b : ℤ} {m n : ℕ } (hrf : Nat.Coprime m n) :  ∃ x, x
     have h3 : b * 1 = b := by exact Int.mul_one b
     rw[←h1, h2, h3] at almost
     exact almost
+
+/-
+EVERYTHING BELOW THIS IS SCRATCH:
+-/
+
+#eval crt_euclid_2 2 3 5 7
+
+-- Prove in case of two coprime
+-- Note: not actually possible with what we have since we just have computations/algorithms, but no theorems
+theorem crt_ee_proof {a₁ a₂ n₁ n₂: ℤ} (hrp: rel_prime_int n₁ n₂) : (crt_euclid_2 a₁ a₂ n₁ n₂) ≡ a₁ [ZMOD n₁] ∧ (crt_euclid_2 a₁ a₂ n₁ n₂) ≡ a₂ [ZMOD n₂] := by
+  apply And.intro
+  . let x := crt_euclid_2 a₁ a₂ n₁ n₂
+    rw[rel_prime_int,gcd_int,theorem1_7] at hrp
+    sorry
+  . sorry
 
 example (k: ℕ) (m : List ℤ) (a : List ℤ) (hm : m.length = k) (ha : a.length = k) (hma : m.length = a.length) :
   -- The moduli must be pairwise coprime
