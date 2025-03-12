@@ -110,8 +110,8 @@ A *common divisor* of two integers *a* and *b* is a positive integer *d* that di
 Let *a* and *b* be positive integers with *a* ≥ *b*. The following algorithm computes gcd(*a*, *b*) in a finite number of steps.<br />
 (1) Let *r₀* = *a* and *r₁* = *b*.<br />
 (2) Set *i* = 1.<br />
-(3) Divide *rᵢ*−1 by *rᵢ* to get a quotient qᵢ and remainder *rᵢ*+1, *rᵢ*−1 = *rᵢ* · qi + *rᵢ*+1 with 0 ≤ *rᵢ*+1 < *rᵢ*.<br />
-(4) If the remainder *rᵢ*+1 = 0, then *rᵢ* = gcd(*a*, *b*) and the algorithm terminates.<br />
+(3) Divide *r<sub>i-1</sub>* by *rᵢ* to get a quotient qᵢ and remainder *r<sub>i+1</sub>*,<br /> *r<sub>i-1</sub>* = *rᵢ* · qi + *rᵢ*+1 with 0 ≤ *r<sub>i+1</sub>* < *rᵢ*.<br />
+(4) If the remainder *r<sub>i+1</sub>* = 0, then *rᵢ* = gcd(*a*, *b*) and the algorithm terminates.<br />
 (5) Otherwise, *rᵢ*+1 > 0, so set *i* = *i* + 1 and go to Step 3.<br />
 
 *Proof:*<br />
