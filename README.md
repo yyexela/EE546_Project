@@ -151,10 +151,13 @@ Intuition for why this works:
 1. By definition, gcd(*a*,*b*), divides *a*, and divides *b*.<br />
 2. Also, gcd(*a*,*b*) divides the sum of *a* and *b*.<br />
 3. More generally, if gcd(*a*,*b*) divides a, then<br />
-we must be able to say *a* × *u* = gcd(*a*,*b*)<br />
-where *u* is some integer (same can be done for b).<br />
+we can say gcd(*a*,*b*) divides *a* × *u* <br />
+where *u* is any integer (same can be done for b).<br />
 4. Therefore gcd(*a*,*b*) divides a linear integer<br />
 combination of *a*,*b* i.e. *au* + *bv*.<br />
+5. This means there is some integer *m* such that<br />
+*m* × gcd(*a*,*b*) = *au* + *bv*. Then there is<br />
+the special case of *m* = 1.<br />
 
 *Algorithm*:<br />
 ```text
