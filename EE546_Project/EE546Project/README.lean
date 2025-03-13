@@ -109,7 +109,7 @@ A *common divisor* of two integers *a* and *b* is a positive integer *d* that di
 Intuition for why the Euclidean Algorithm works:
 1. If integers *a*, *b* have common factor *f*, then <br />
 *a* = *f* × *n₁* and *b* = *f* × *n₂*.<br />
-2. Then *a*-*b* = *f*(*n₁*-*n₂*), which shows the key<br />
+2. Then *a*-*b* = (*n₁*-*n₂*) × *f*, which shows the key<br />
 principle: the common factor of the integers *a*,*b*<br />
 is also a common factor of their difference.
 3. If *f* is a factor of (*a*-*b*) and *b*, then *f* is<br />
