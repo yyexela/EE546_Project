@@ -106,6 +106,16 @@ Let *a* and *b* be positive integers. Then we say that *a* divided by *b* has qu
 **Definition of common divisor and greatest common divisor**<br />
 A *common divisor* of two integers *a* and *b* is a positive integer *d* that divides both of them. The *greatest common divisor* of *a* and *b* is the largest positive integer *d* such that *d* | *a* and *d* | *b*. We denote this by *d* = gcd(*a*,*b*).
 
+Intuition for why the Euclidean Algorithm works:
+1. If integers *a*, *b* have common factor *f*, then <br />
+*a* = *f* × *n₁* and *b* = *f* × *n₂*.<br />
+2. Then *a*-*b* = *f*(*n₁*-*n₂*), which shows the key<br />
+principle: the common factor of the integers *a*,*b*<br />
+is also a common factor of their difference.
+3. If *f* is a factor of (*a*-*b*) and *b*, then *f* is<br />
+also a factor of (*a*-*b*)-*b*. So this process can<br />
+continue until we get the common factor.<br />
+
 **Theorem 1.7** (The Euclidean Algorithm)<br />
 Let *a* and *b* be positive integers with *a* ≥ *b*. The following algorithm computes gcd(*a*, *b*) in a finite number of steps.<br />
 (1) Let *r₀* = *a* and *r₁* = *b*.<br />
